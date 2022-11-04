@@ -8,9 +8,8 @@ defined('_SYSPATH') or header('HTTP/1.1 404 File Not Found');
 * 2016-01-23 -> adresy z new.meteo na meteo
 * 2013-09-10
 *
-*
 * autorem skryptu jest
-* projekt.etvn.pl & aleproste.pl Dariusz Golczewski -------- 2009-11-11 --- UTF-8
+* glajtem.pl Dariusz Golczewski -------- 2009-11-11 --- UTF-8
 * skrypt nie jest darmowy!
 * legalne wykorzystywanie skryptu wymaga opłaty licencyjnej lub indywidualnej zgody autora
 *
@@ -20,12 +19,6 @@ defined('_SYSPATH') or header('HTTP/1.1 404 File Not Found');
 class Glajtem
 {
  private $w = array(); 											//-wynik działania klasy
-
-
- /**
- *
- *
- */
 
  function __construct()
  {
@@ -83,9 +76,9 @@ class Glajtem
 
  public function pogoda_wf()
  {
+    $pl = '';
 
     $place = array('czeszka', 'mieroszow'); //, 'andrzejowka', 'dzikowiec', 'kudowa_czermna', 'srebrna_gora', 'zmij', 'czarna_gora');
-
     foreach($place as $wart)
 	  $pl .= '
   	 <div class=\'pogoda3\'>
@@ -149,9 +142,6 @@ class Glajtem
 
   $h = date('H', strtotime('+1 hour'));
 
-
-
-
   $this->w = '
    <h2>Pogoda by Flymet:</h2>
 	<div id=\'flymet\'>
@@ -159,7 +149,6 @@ class Glajtem
 	  <p>Dzisiejsza prognoza wyświetla się dynamicznie od 10:00 do 19:00 z wyprzedzeniem o 1h.</p>
 	  <p>Prognoza na jutro wyświetla statycznie na godzinę 12:00</p>
 	 </blockquote>';
-
 
   if($h < 19 && $h > 6)
   {
@@ -177,10 +166,6 @@ class Glajtem
 	<img src=\'http://flymet.meteopress.cz/crdl/cudf12.png\' />
 	<img src=\'http://flymet.meteopress.cz/crdl/vitrx12.png\' />
 	<img src=\'http://flymet.meteopress.cz/crdl/srzk12.png\' />';
-
-
-
-
 
   $this->w .= '
     <h3>Pokrycie i podstawa Cu</h3>
@@ -310,14 +295,7 @@ class Glajtem
  public function flymet2()
  {
 
-
-
-
-
   $h = date('H', strtotime('+1 hour'));
-
-
-
 
   $this->w = '
    <h2>Pogoda by Flymet:</h2>
@@ -595,9 +573,9 @@ class Glajtem
 	 </div>
 
 	 <div>
-	  <span >Żywiec</span><a
-		href=\'http://www.meteo.pl/um/php/meteorogram_id_um.php?ntype=0u&id=862\'
-		target=\'_blank\'>60h</a><a
+	  <span >Żar</span><a
+		href=\'http://www.meteo.pl/um/php/meteorogram_id_um.php?ntype=0u&id=863\'
+		target=\'_blank\' title=\'Czernichów\'>60h</a><a
 	  href=\'http://www.xcmeteo.net/?p=19.19243x49.68529,t='.$daate[0].'-'.$daate[1].'-'.$daate[2].'T9:00:00Z,s=Żywiec\'
 	  target=\'blank\' title=\'XCmeteo-Żywiec\'>xcm</a>
 	 </div>
@@ -634,12 +612,6 @@ class Glajtem
 	  target=\'blank\' title=\'\'>12Z</a>
 	 </div>
 
-
-	 <div>
-	  <span >Broumov : Lotnisko (Kudowa)</span><a
-		class=\'wf\' href=\'http://www.airbroumov.eu/wd/index.html\' target=\'_blank\'>STP</a>
-	 </div>
-
 	</div>';
 
   //http://www.xcmeteo.net/?p=15.739926x50.649317,t=2018-02-09T12:00:00Z,s=czerna%20hora
@@ -648,10 +620,13 @@ class Glajtem
   //http://www.xcmeteo.net/?p=15.83559x50.79313,t=2018-02-09T12:00:00Z,s=kowary
   //
 
+  /*
+  <div>
+	  <span >Broumov : Lotnisko (Kudowa)</span><a
+		class=\'wf\' href=\'http://www.airbroumov.eu/wd/index.html\' target=\'_blank\'>STP</a>
+	 </div>
 
-
-
-
+  */
 
  }
 
