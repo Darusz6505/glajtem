@@ -1,0 +1,572 @@
+/**
+*
+* projekt :: glajtem.pl
+*
+* 2015-03-18
+* 2015-01-06
+* 2014-03-22
+*
+* aleproste.pl :: Dariusz Golczewski
+*
+*/
+
+* {
+	margin: 0;
+	padding: 0;
+	font: normal 12px /160% Verdana, Tachoma, Helvetica, sans-serif;
+	text-decoration: none;
+	outline: none;
+	border: none;
+	list-style: none;
+	color: #303030;
+	/*color: #4E4E4E; */
+	/*letter-spacing: 0.5px; */
+	/*filter: gray; */
+}
+
+div, blockquote {position: relative;}
+
+body {}
+
+.akapit {margin: 0 1em .5em; text-indent: 1em;	max-width: 99%; font-size: 1.2em;}
+
+.b {font-weight: bold; font-size: 1.1em;}
+.l {color: #000; font-weight: bold; font-size: 1.3em;}
+.p {color: #960; font-weight: bold;}
+.r {color: #C00;}
+.n {color: #00F;}
+.g {color: #090;}
+
+.ce {
+	display: block;
+	width: 100%;
+	margin: .3em 0;
+	text-align: center;
+}
+
+.podpis {
+	display: block;
+	position: relative;
+	width: 90%;
+	margin: 1em auto;
+	text-align: right;
+	letter-spacing: 1px;
+}
+
+ul.bbcode {width: 90%; margin: 0 auto;	padding: 0 0 1em;}
+
+ul.bbcode li {list-style: circle outside; font-size: 1.2em; }
+
+.lde {padding: 0 1em; font: bold 1.2em Arial; color: #00C; text-decoration: underline;}
+
+#seorekl {width: 800px; margin: 5px auto;}
+
+#rekl_head {
+	width: 780px;
+	margin: 5px auto;
+}
+
+.url2, .url {text-decoration: underline; color: #00C; font-weight : bold; }
+
+.yt1, .yt2 {padding: 1em;}
+
+#yt2 {width: 500px; height: 300px;}
+
+/* ------------------------------- */
+
+.menu {text-align: center;}
+
+#menu {
+	z-index: 9900;
+	min-height: 55px;
+	top: 0;
+	margin: 0 auto;
+	background: RGBa(0, 150, 200, .7);
+
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+
+	border-left: 1px solid #FFF;
+	border-right: 1px solid #FFF;
+	border-bottom: 1px solid #FFF;
+}
+
+#menu ul {}
+
+.menu ul li{ display: inline-block;}
+
+.m1 a {}
+
+.menu li a {
+	display: block;
+	margin: 2px 0 10px;
+	height: 28px;
+}
+
+.menu li a b {
+	padding: 0 1em;
+	font-weight: normal;
+	font-size: 1.4em;
+	color: #FFF;
+	text-shadow: 3px 3px 3px #000;
+	text-transform: uppercase;
+}
+
+.menu li .active, .menu li:hover a {height: 25px; border-bottom: 3px solid #FFF;}
+
+.menu li:hover a {border-color: #FFF;}
+
+#down_start, .menudown {
+	width: 90%;
+	min-height: 50px;
+	margin: 10px auto 0;
+	background: RGBa(0, 150, 200, .8);
+	border: 1px solid #FFF;
+   border-radius: 8px;
+}
+
+.menudown h4 {
+	padding: .3em 1em;
+	font: bold 1.2em Arial;
+	color: #FFF;
+}
+
+#stopka_start {
+
+	margin: 10px auto 50px;
+	background: RGBa(0, 150, 200, .8);
+	border: 1px solid #FFF;
+   border-radius: 8px;
+}
+
+#stopka {
+	margin: 1em auto;
+	background: RGBa(0, 150, 200, .8);
+	border: 1px solid #FFF;
+   border-radius: 8px;
+}
+
+.footer {
+	padding: 1em;
+	text-align: center;
+}
+
+#smartfon {text-align: center;} /* dodoatkowe pole testowe pod stopką */
+
+#extra { /* pole z klubami i dlp na startowej */
+	float:right;
+	clear: right;
+	width: 300px;
+}
+
+#extra a {
+	display: block;
+	width: 298px;
+	float: right;
+	clear: right;
+	padding: .4em 1em;
+	margin: .4em 0;
+	font: bold 1.8em Arial;
+	text-shadow: 3px 3px 10px #000;
+	color: #FFF;
+	text-align: right;
+	border: 1px solid #FFF;
+}
+
+/* -------------------------- */
+
+.width {width: 90%;}
+
+#start_side {
+   min-height: 500px;
+	margin: 10px auto 10px;
+}
+
+#side {
+	width: 80%;
+	min-height: 550px;
+	padding: 1em 5%;
+	margin: 1em auto;
+	background: RGBa(255,255,255, 0.8);
+   border-radius: 16px;
+}
+
+
+h2, h3 {
+	padding: 10px 0;
+	text-shadow: 3px 3px 10px #626262;
+	text-indent: 1em;
+}
+
+h2 {font: normal 2em Arial;}
+
+h2.tyt {margin: 0 1em; text-indent: 0;}
+
+h3 {font: normal 1.5em Arial;}
+
+
+
+ul.zaj li {border-bottom: 4px solid #202020;	border-right: 3px solid #202020;}
+
+.zaj li {
+	position: relative;
+	width: 96%;
+	overflow: auto;
+	margin: 0 auto 1em;
+	background: #FFF;
+	border-radius: 10px;
+}
+
+.info {text-align: center;}
+
+.zaj li div.info {clear: both; height: 3em; width: 100%;}
+
+.zaj li blockquote {margin-left: 1em;}
+
+
+
+.galeriaZaj {
+	width: 350px;
+	float: left;
+	margin: 0 1em 1em;
+	overflow: auto;
+}
+
+.galeriaZaj img {border-radius: 10px;}
+
+#galeria {
+	margin: 60px auto 10px;
+	width: 1100px;
+	padding: 10px;
+	min-height: 550px;
+	background: RGBa(255,255,255, 0.5);
+   border-radius: 16px;
+}
+
+#galeria h1, .blog h1 {
+	font: normal 1.8em Arial;
+	text-shadow: 4px 4px 10px #000;
+	text-indent: 2em;
+}
+
+#galeria h2, .blog h2 {
+	font: normal 1.5em Arial; color: #FFF;
+	text-shadow: 4px 4px 10px #000;
+	text-indent: 1em;
+}
+
+#galeria blockquote {
+	padding: 1em 2em;
+	background: #F2F2F2;
+	border-radius: 16px;
+}
+
+#galeria blockquote img {border-radius: 10px; background: #FFF;}
+
+.fodown, .foup {
+	width: auto;
+	padding: 1em 0;
+	text-align: center;
+}
+
+a.imgs {display: inline-block;}
+
+
+
+
+
+
+
+
+
+
+
+.kamery ul.zaj h2 {font-size: 1em;}
+
+.kamery ul.zaj h3 {
+	padding: 10px 0;
+	font: normal 2em Arial;
+	text-shadow: 3px 3px 10px #626262;
+	text-indent: 1em;
+}
+
+
+.kamery ul.zaj {overflow: auto;}
+
+div.zajgal li, .kamery ul.zaj li {
+	float: left;
+	clear: right;
+	width: 48%;
+	margin: 4px .5%;
+	overflow: auto;
+ 	margin-left: 1%;
+}
+
+div#side.zajgal, div#side.kamery {overflow: auto; background: none;}
+
+
+
+.more, .back {
+	display: inline-block;
+	padding: .4em 1em;
+	background: #00F;
+	color: #FFF;
+	bottom: 5px;
+	right: 5px;
+	border-bottom-left-radius: 8px;
+	border-top-right-radius: 8px;
+}
+
+.more {position: absolute;}
+.back {margin: 1em 0;}
+
+.back:hover, .more:hover {text-decoration: underline;}
+
+.brak_pub {
+	font: normal 2em /200% Arial;
+	text-shadow: 3px 3px 10px #626262;
+	padding: 2em 0;
+	text-align: center;
+}
+
+.brak_pub b {display: block;}
+
+.zobfilm {font-weight: bold; color: #F00;}
+
+.do_kadr {
+	float: left;
+	clear: right;
+	border: 1px solid #00C;
+}
+
+.do_kadr p, .edFoto p {
+	position: absolute;
+	top: 40%;
+	width: 100%;
+	text-align: center;
+	color: #FFF; font: bold 1.4em Arial;
+	text-shadow: 3px 3px 5px #FFF;
+}
+
+.edFoto p {font: bold 1em Arial;}
+
+/* fan page wysuwany z prawej */
+
+.fb, .fb_inside, .fb iframe {height: 300px;}
+
+.fb h2 {color: #FFF; border: none;}
+
+.fb {
+	position: fixed;
+	z-index: 9999;
+	top: 100px;
+	width: 8px;
+	overflow: hidden;
+	padding: 0 10px;
+}
+
+.fb:hover {width: 440px;}
+
+.fb_inside {position: relative; top: 0px; padding-top: 10px; width: 100%; background: url(../skin/fb_tlo.png);}
+
+#fb_right .fb_inside {left: 28px;}
+#fb_left .fb_inside {left: -28px;}
+
+#fb_right {right: 0; background: url(../skin/fbr.png) top left no-repeat;}
+#fb_left {left: 0; background: url(../skin/fbl.png) top right no-repeat;}
+
+.fb iframe {position: absolute; width: 300px;}
+
+#fb_right iframe {left: 10px;}
+#fb_left iframe {right: 10px;}
+
+
+/* status livetracka na stronie startowej */
+
+.status {
+	padding: 1em 0;
+	width: 90%;
+	margin: 0 auto;
+}
+
+.status iframe {
+	display: block;
+	position: relative;
+	border: 1px solid #009;
+	clear: left;
+	margin: 5px 0;
+	height: 20px;
+}
+
+#cam_dzik {display: none;} /* dla nie smartfona */
+
+.g-post {top: 150px;} /* na stronie startowej dla plus.google.com - wyłączone */
+
+/* ------------- */
+
+
+#map {
+	display: block;
+	position: relative;
+	width: 100%;
+	height: 700px;
+	background-color: #FFF;
+}
+
+
+.migc {
+	display: inline-block;
+	padding: .2em .5em;
+	margin: .3em .5em;
+	border-radius: 4px;
+}
+
+a.migc {color: #D3D3D3; border: 1px solid #D3D3D3;}
+a.migc:hover {color: #Ff0; border-color: #Ff0;}
+
+a.igcact {color: #FFF; border-color: #FFF;}
+
+span.migc {color: #0CF; border: 1px solid #0CF;}
+
+#loty, #taski {text-align: center;}
+
+/* ------------------------------ */
+
+#pogoda1 {
+	overflow: auto;
+	width: 100%;
+	text-align: center;
+}
+
+.pogoda1 {
+	/*border: 1px solid black;  */
+	display: inline-block;
+	clear: right;
+	width: 460px;
+	height: 460px;
+	border-radius: 10px;
+	margin: 1em;
+}
+
+.pogoda2 {
+	/*border: 1px solid black;  */
+	display: inline-block;
+	clear: right;
+	width: 460px;
+	height: 1030px;
+	margin: 1px;
+	vertical-align: top;
+}
+
+#pogoda1+blockquote {
+	clear: both;
+	width: 90%;
+	margin: 0 auto;
+	padding: 1em 10px;
+	background: #F90;
+	color: #000;
+	border-radius: 10px;
+}
+
+#pogoda1+blockquote h3 {
+	padding: 0 0 .5em;
+	font: bold 1.3em Helvetica, sans-serif; color: #FF0;
+	text-shadow: 3px 3px 3px #626262;
+	letter-spacing: 1px;
+}
+
+
+#sat24 {
+	width: 460px;
+	height: 460px;
+	overflow: hidden;
+	border-radius: 16px;
+}
+
+#sat24 img {display: block; height: 460px;}
+
+/* ----------------------------- */
+
+#icm {overflow: auto;}
+
+#icm div {
+	float: left;
+	clear: right;
+	width: 47%;
+	margin: 1px;
+	padding: 1em;
+	border: 1px solid #FFF;
+	border-radius: 8px;
+}
+
+#icm div span, #icm div a {
+	font: normal 1.5em Arial;
+	padding: .5em;
+	background: #69F;
+	color: #FFF;
+}
+
+#icm div a {
+	display: inline-block;
+	width: 50px;
+	height: 2em;
+	margin-left: 1px;
+	text-align: center;
+	background: #0C0;
+	vertical-align: top;
+}
+
+#icm div a+a {background: #C30;}
+
+#icm div span {
+	display: inline-block;
+	width: 300px;
+	height: 2em;
+	text-align: right;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+}
+
+
+#icm div span a {
+	display: inline-block;
+	width: 298px;
+	margin-top: -.5em;
+	margin-left: -.5em;
+	font: normal 1em Arial;
+	text-align: right;
+	background: #69F;
+	color: #FFF;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+}
+
+#icm div a.wf {border-top-right-radius: 6px;	border-bottom-right-radius: 6px;}
+
+/* sta24 */
+a.smart {
+	display: inline-block;
+	padding: .4em 1em;
+	margin: 1em;
+	text-align: center;
+	font: bold 1.2em/ 120% Arial;
+	background: #39F;
+	border-radius: 5px;
+}
+
+a.smart:hover {background: #3FF;}
+
+/* flymet */
+
+.dmfly,.dmfly2 {
+	margin: 2px 0;
+	height: auto;
+	overflow: auto;
+}
+
+.dmfly img {float: left; clear: right; margin: 2px;}
+
+.flymet2 {
+	width: 100%;
+	overflow: auto;
+}

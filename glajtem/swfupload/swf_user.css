@@ -1,0 +1,76 @@
+/**
+*
+* style AddPhoto dla konkretnego projektu
+*
+*/
+
+#addPhoto {
+	padding: 1em;
+	background: #666;
+	border-radius: 8px;
+}
+
+#swf_addphoto {padding: 1em;	text-align: center;}
+/*#spanButtonPlaceholder {height: 40px; padding: .5em; background: #03F; width: 50%;} formatowanie nie działa */
+
+#sw_button {padding: 1em}
+
+#divFileProgressContainer {text-align: center;/*border: 1px solid red; */}
+#swf_loadForm {overflow: auto; text-align: center;}
+
+#swf_ster_form {clear: both; padding: 1em 0;	text-align: center;}
+
+.sw_info {text-align: center;}
+.sw_info blockquote {display: inline-block; padding: 1em; border-radius: 6px; background: #6FF;}
+
+.swf_thumbs {display: block; margin: 1em auto;}
+
+.swf_formPlace {
+	float: left;
+	/*display: inline-block; */
+	clear: right;
+	width: 280px;
+	height: 300px;
+	margin: 5px;
+	padding: 10px;
+	border: 1px solid #CCC;
+	border-radius: 6px;
+}
+
+.swf_formPlace p {width: 270px; overflow: hidden;}
+
+
+
+#swf_loadForm label {display: inline-block; margin: 0 2%; width: 10%; text-align: right;}
+form#swf_loadForm input[type=text] {width: 80%;	padding:.3em .5em; margin: .3em 0; color: #000;}
+#swf_loadForm input[type=checkbox] {margin: .5em 0 0;}
+
+
+
+.swfupload {height: 50px; border-radius: 5px; background: #3CF; /*background: url(../cms/skin/taster_long.jpg) no-repeat; */}
+
+.swfupload:hover { font-weight: bold; color: #30F; /*background: url(../cms/skin/longhover.jpg) no-repeat;*/}
+
+
+#addPhoto {width: 90%; margin: 1em auto; min-height: 400px;}
+
+#addPhoto p {line-height: 160%; color: #000;}
+
+#swf_loadForm input[type=submit], #addPhoto a.back {
+ padding: .5em 1em;
+ margin: 1em 0;
+ color: #FFF;
+ text-align: center;
+ text-transform: uppercase;
+ font-weight: bold;
+ letter-spacing: .7px;
+ background: #3CF;
+ border-radius: 5px;
+}
+
+#swf_loadForm input[type=submit] {width: 18ex;}
+
+#addPhoto a.back {display: block; width: 210px;	height: 30px; /*background: url(../cms/skin/taster_long.jpg) no-repeat; */}
+
+#addPhoto a.back:hover, #swf_loadForm input[type=submit]:hover {font-weight: bold; color: #30F;/*background: url(../cms/skin/longhover.jpg) no-repeat;*/}
+

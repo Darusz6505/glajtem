@@ -1,0 +1,249 @@
+/**
+*
+* 2016-05-28 : wyróznienie miniatur zdjęć 'doczepionych' z innej publikacji
+* 2013-05-21 : dodano formatowanie edR dla fb fanpage
+*
+uniwersalny 2008-12-13 -> 2010-09-21 -> 2010-11-03 -> 2011-01-24 -> 2011-03-29 -> 2012-05-10 -> 2012-05-30 -> 2012-12-01 -> 2013-02-16
+
+2012-12-01 : dodoano link laddel - do kasowania bezpośredniego
+
+formaty widoczne tylko dla admina
+
+*/
+
+body {
+ font-family: Arial;
+ background: #CCC;
+}
+
+#adm_side_error {
+	max-width: 900px;
+	margin: 1em auto;
+}
+
+.adm_error {display: inline-block; clear: both; padding: 1em 1em; font-weight: bold; color: #FFF; border-radius: 6px; background: #F00;}
+
+h1.adm_error {display: block; text-align: center; background: #F00; }
+
+.adm_error_kom {background: #F3C;}
+
+.adm_end {display: block; max-width: 900px;	margin: 1em auto; background: #996; border-radius: 6px; padding: .5em 1em; text-align: center;}
+
+
+
+.red {color: #F30;} /* ogólny 2012-01-07 ok. */
+
+/* pole admina w widoku usera */
+
+#ko_adm { /* 2012-01-07 ok. */
+	z-index: 9999;
+	position: fixed;
+	overflow: hidden;
+	top: 5px;
+	right: 30px;
+	width: auto;
+	height: 30px;
+	background: RGBa(255,255,255,.8);
+	border: 1px solid #999;
+	border-radius: 5px;
+}
+
+#ko_adm:hover {height: auto; width: auto;}  /* 2012-01-07 ok. */
+
+#ko_adm a { /* 2012-01-07 ok. */
+	z-index: 9999;
+	display: block;
+	padding: 0.3em 0;
+	font-weight: bold;
+	color: blue;
+}
+
+#ko_adm a:hover {color: red; text-decoration: underline;} /* 2012-01-07 ok. */
+
+#ko_adm p {	 /* 2012-01-07 ok. */
+	margin: 3px;
+	padding: 0 4px;
+	text-align: left;
+	line-height: 100%;
+	font: bold 12px Arial; color: #000;
+}
+
+#ko_adm p+p {margin: 0 3px  3px;}  /* 2012-01-07 ok. */
+
+.kom_admin {text-align: center;}
+
+.klko {}
+
+.edFoto {
+	display: inline-block;
+	position: relative;
+	background: RGBa(0,0,0,.2);
+	margin: 0;
+	min-height: 100px;
+	min-width: 100px;
+}
+
+.adFotod {border: 1px solid red;}
+
+
+
+.dodaj {
+	display: block;
+	z-index: 9980;
+	clear: both;
+	width: 90%;
+	margin: .4em auto;
+	padding: .3em 4%;
+	font: normal .9em Arial; color: #FFF;
+	text-transform: uppercase;
+	text-decoration: underline;
+	text-align: center;
+	background: RGBa(150,150,150, .8);
+	border-radius: 3px;
+}
+
+.dodaj:hover {color: #FC0;}
+
+.blok_publ {min-height: 180px; border: 1px dotted #999;} /* overflow: auto; */
+
+.pre {
+	clear: both;
+	position: relative;
+	width: 97%; margin: 1em auto; padding: 1em 1%; border: 1px solid #330;
+}
+
+.pre p {margin: .4em 0;}
+
+.pre b {color: #0CC;}
+.pre b+b {color: #900;}
+
+.brak_danych {clear: both;}
+
+.edZaj {position: relative; min-height: 200px;} /*overflow: auto; */
+
+#addphoto a.back {padding: .3em 1em; border: 1px solid blue;}
+#addphoto a.back:hover {background: blue; color: #FFF; border-color: #999;}
+
+#swf_loadForm+p {margin: 1em 0; font-weight: bold; color: #F60;}
+
+.over {overflow: auto;}
+
+
+.ed {
+	z-index: 9999;
+	position: absolute;
+	top: 0;
+	width:29px;
+	height: 0;
+	padding-top: 30px;
+	overflow: hidden;
+
+}
+
+.edL, .edF {left: 0; background: url(../skin/aleed.png) left top no-repeat;}
+
+.edR {right: 0; background: url(../skin/aleed.png) right top no-repeat;}
+
+.fb_inside .edR {right: 35px;}
+
+.edR a {text-align: right;}
+
+.ed a {
+	display: block;
+	width: auto;
+	padding: 5px;
+	background: RGBa(255,255,255,.9);
+	color: #00F;
+}
+
+a.del {color: red;}
+
+.ed a+a {padding-top: 0;}
+
+.ed a:hover {text-decoration: underline;}
+
+.ed:hover {position: absolute;  z-index: 9988; width: auto; height: auto; padding: 3px 0; background: RGBa(255,255,255,.8); border-radius: 4px;}
+
+.adm_fblok {border: 1px solid red;}
+.adm_zablok {position: absolute; left:5px; bottom: 5px; width: auto; font: bold 1.2em Arial; color: red;}
+
+.dadr_admin {padding: 1em; text-align: center; border-radius: 6px; background: #F00; color: #FFF;
+text-transform: uppercase; font-weight: bold;}
+
+
+.ad_config {
+ display: inline-block;
+ margin: 1em 0;
+ padding: .5em 1em;
+ border-radius: 5px;
+ text-transform: uppercase;
+ font: bold 1em Arial; color: #FFF;
+ background: #93F;
+ text-decoration: none;}
+
+.ad_config:hover {color: #Ff0;}
+
+.adm_box {
+	display: inline-block;
+	width: auto;
+	margin: 1em 0 0;
+	padding: .5em 1em;
+	border-radius: 5px;
+	background: red;
+	font-weight: bold;
+	color: #FFF;
+}
+
+
+.adm_kombox {background: #06F;}
+.adm_errbox {background: #F00; margin-left: 3em;}
+.adm_konbox {background: #0CF; margin-left: 2em;}
+.adm_alertbox {background: #F90; margin-left: 2em;}
+
+
+
+
+.adm_box b, .adm_box i {
+	display: inline-block;
+	padding: .2em 1em;
+	margin: 0 .5em;
+	border-radius: 3px;
+	font-weight: bold;
+}
+
+.adm_box b {background: #093;}
+.adm_box i {background: #3CF;}
+
+#adm_infbox, #adm_test {
+	display: inline-block;
+	padding: 1em;
+	border-radius: 4px;
+}
+
+#adm_infbox {margin: 1em 0 0 3em; background: #CFC;}
+
+#adm_test {
+	z-index: 9998;
+	position: fixed;
+	top: 50px;
+	right: 10px;
+	text-transform: uppercase;
+	color: #FFF;
+	background: #06F;
+}
+
+#adm_test:hover {font-weight: bold; text-decoration: underline;}
+
+.klpo {min-height: 100px; padding: 0 0 1em;}
+
+.klpo+.klpo {padding: 1em 0 0; border-top: 1px dotted red;}
+
+
+ul.zaj li.blok, .blok {background: #FFD7D7;} /* zawartość ukryta 2014-07-08 */
+ul.zaj li.dopu, .blok {background: #C1FFC1;} /* zawartość przygotowana do publikacji 2014-07-08 */
+
+ul#fotogallist {padding: 1em 0; background: #FFF;}
+ul#fotogallist li span {color: #595959; display: inline-block; width: 6ex; text-align: right; padding-right: 1em; }
+ul#fotogallist span+span {display: inline; padding-left: 1em; color : #99C;}
+ul#fotogallist a {paddong-left; 1em; color: #00F;}
+ul#fotogallist a:hover {color: #C0C;}

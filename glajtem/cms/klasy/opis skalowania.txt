@@ -1,0 +1,37 @@
+
+
+współczynnik kadrowania szerokości  = szerokość kadrowana / szerokość kadru
+współczynnik kadrowania wysokości 	= wysokość kadrowana / wysokość kadru
+
+
+jeśli jest kadrowanie to:
+
+1. rozmiary miniatury są dokładnie takie jak zadany kadr
+2. rozmiary miniatory są powiększane proporcjonalnie o tyle, aby można było wyciąć zdefiniowany kadr
+
+czyli : 	szerokość docelowa = szerokość zadana   
+			wysokość docelowa  = wysokość zadana
+			
+UWAGA : poza kadrem kwadratowym to nie ma odbicia w przekazaniu parametrów do skryptu skalującego !!! ( do zrobienia !!!)
+
+priorytet->	wysokość do wykadrowania  = wysokość zadana * współczynnik kadrowania wysokości
+
+				szerokość do wykadrowania = szerokość oryginału * ( wysokość do wykadrowania / wysokość oryginału)
+
+
+rozmiar docelowy to parametr funkcji :: imagecreatetruecolor();
+
+rozmiar do wykadrowania to parametr funkcji imagecopyresampled()  Destination width i Destination height
+
+pozycja górnego lewego rogu kadru to parametry x-coordinate of source point. oraz y-coordinate of source point.
+
+		 $p['dx'] = (int)(szerokość oryginału * współrzędna x1 / szerokość kadrowana); //-pozycja górnego lewego rogu kadru
+		 $p['dy'] = (int)(wysokość oryginału *  współrzędna y1 / wysokość kadrowana);
+
+UWAGA! szerokość i wysokość kadrowana to rozmiary skalowanego przez CSS zdjęcia na którym odbywa się kadrowanie. Ten parametr zadawany jest w kodzie javascript.	 
+
+
+
+analogiczne dla zdjęcia pionowego
+	
+

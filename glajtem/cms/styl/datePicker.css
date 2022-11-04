@@ -1,0 +1,55 @@
+/* 
+* kalendarz dla pól DATA 
+* 2011-11-25
+*
+*/
+
+#dataPicker {
+	position: absolute; 
+	z-index: 9999; 
+	left: 100px;
+	background: #fff;
+}
+
+.kalendar {
+	position: relative;
+	overflow: auto;
+	width: 154px;
+	padding: 4px;
+	font: normal 11px Arial, Helvetica, sans-serif;
+	border: 1px solid #D3D3D3;
+}
+
+
+.kalendar .ciem {color: #FFF; background: #737373;}
+.kalendar .nie {color: #FFF;}
+.kalendar .nie {background: #F00;}
+.kalendar .sob {background: #CACACA;}
+.kalendar .dzis {font-weight: bold; background: #FF9; color: #000;}
+
+.kalendar div {
+	float:left;
+	/*padding-top: 3px; */
+   width:20px; 
+	height:20px; 
+	border: 1px solid #fff; 
+	background: #E8E8E8; 
+}
+
+.load, .kalendar div {text-align: center;}
+
+.kalendar .nags {width:108px;}
+
+.kalendar div:hover {color:white;	background:#03F;} 
+
+.kalendar .close {float: right; margin-right: 5px;}
+
+select.data2, select.data {width: 4em;}
+
+#closeKalendar:hover {cursor: pointer; border-bottom: 2px solid blue;}
+
+.month:hover {cursor: pointer; background: blue; color: #FFF;}
+
+.day:hover {cursor: pointer;}
+
+/* kalendarz dla pól DATA - END */

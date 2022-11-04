@@ -1,0 +1,10 @@
+[23-Apr-2014 20:41:52] PHP Warning:  imagecreatefromjpeg(.././foty/m_15535808f5a2ded.jpg) [<a href='function.imagecreatefromjpeg'>function.imagecreatefromjpeg</a>]: failed to open stream: No such file or directory in /cms/tmp_foto_cms.php on line 47
+[11-May-2014 13:37:02] PHP Warning:  imagecreatefromjpeg(.././foty/m_15535807d29c82f.jpg) [<a href='function.imagecreatefromjpeg'>function.imagecreatefromjpeg</a>]: failed to open stream: No such file or directory in /cms/tmp_foto_cms.php on line 47
+[11-May-2014 15:04:41] PHP Warning:  imagecreatefromjpeg(.././foty/m_1553553dcebf612.jpg) [<a href='function.imagecreatefromjpeg'>function.imagecreatefromjpeg</a>]: failed to open stream: No such file or directory in /cms/tmp_foto_cms.php on line 47
+[11-May-2014 16:41:04] PHP Warning:  imagecreatefromjpeg(.././foty/m_155358051b74e97.jpg) [<a href='function.imagecreatefromjpeg'>function.imagecreatefromjpeg</a>]: failed to open stream: No such file or directory in /cms/tmp_foto_cms.php on line 47
+[11-May-2014 16:44:23] PHP Warning:  imagecreatefromjpeg(.././foty/m_155358097465b5c.jpg) [<a href='function.imagecreatefromjpeg'>function.imagecreatefromjpeg</a>]: failed to open stream: No such file or directory in /cms/tmp_foto_cms.php on line 47
+[11-May-2014 16:45:00] PHP Warning:  imagecreatefromjpeg(.././foty/m_15535807d29c82f.jpg) [<a href='function.imagecreatefromjpeg'>function.imagecreatefromjpeg</a>]: failed to open stream: No such file or directory in /cms/tmp_foto_cms.php on line 47
+[11-May-2014 19:05:23] PHP Warning:  imagecreatefromjpeg(.././foty/m_1553542f95916ab.jpg) [<a href='function.imagecreatefromjpeg'>function.imagecreatefromjpeg</a>]: failed to open stream: No such file or directory in /cms/tmp_foto_cms.php on line 47
+[13-Jan-2021 20:27:17 Europe/Warsaw] PHP Deprecated:  Function get_magic_quotes_gpc() is deprecated in /cms/myDataPicker.php on line 14
+[13-Jan-2021 20:27:20 Europe/Warsaw] PHP Deprecated:  Function get_magic_quotes_gpc() is deprecated in /cms/myDataPicker.php on line 14
+[13-Jan-2021 20:27:25 Europe/Warsaw] PHP Deprecated:  Function get_magic_quotes_gpc() is deprecated in /cms/myDataPicker.php on line 14

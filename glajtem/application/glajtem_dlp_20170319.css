@@ -1,0 +1,210 @@
+/**
+*
+* projekt :: glajtem.pl
+*
+* 2015-03-18
+* 2015-01-06
+* 2014-03-22
+*
+* aleproste.pl :: Dariusz Golczewski
+*
+*/
+
+#spon {margin: 0 auto; text-align: center;}
+
+
+table#dlp_tab {display: inline-block; vertical-align: top; clear: right; margin: 0 0 1em; padding: 0;  border-collapse: collapse; background: #09F; background: RGBa(0, 150, 200, .75);}
+
+table#dlp_tab td {
+	text-align: center;
+	border: 1px solid #CFC;
+	margin: 0;
+	padding: 0 .5em;
+	color: #FF0;
+	line-height: 300%;
+}
+
+
+table#dlp_tab tr.pudlo td, table#dlp_tab tr.pudlo td p { background: #99F;}
+
+table#dlp_tab td p {color: #FFF;}
+
+table#dlp_tab td.winer {background: #C00; color: #FFF; font-weight: bold;}
+table#dlp_tab td.winer a {background: #C00; color: #F90; font-weight: bold; text-decoration: underline; width: 100%; height: 100%; display: block;}
+
+table#dlp_tab tr.pudlo td, table#dlp_tab tr.pudlo td p { background: #03F;}
+table#dlp_tab tr.pudlo td.winer, table#dlp_tab tr.pudlo td.winer a p, table#dlp_tab tr.pudlo td.winer p
+{background: #C00; color: #FFF; font-weight: bold;}
+
+
+table#dlp_tab tr.pudlo td {border: 1px solid #FF0; border-bottom: 2px solid #FF0;}
+
+table#dlp_tab td.winer p {color: #FFF; font-weight: bold;}
+table#dlp_tab td.winer a:hover {background: #63F;}
+
+table#dlp_tab td p:hover {color: #FFF;}
+
+table#dlp_tab td a p {width: 100%; height: 100%;}
+table#dlp_tab td a  {display: block; width: 100%; height: 100%; text-decoration: underline;}
+
+table#dlp_tab td a:hover {background: #63F; color: #FFF;}
+
+table#dlp_tab td.suma {font-weight: bold;}
+
+table#dlp_tab tr.tab_hed td {border: 0;}
+table#dlp_tab tr.tab_hed td {padding: 0 0.2em 0.2em; line-height: 100%;}
+td.dlp_summ b {font-weight: bold; color: #F90;}
+td.dlp_summ {background: #00C;}
+
+td.suma a {font-weight: bold; color: #FF0;}
+
+table#dlp_tab tr.pudlo td.dlp_summ, table#dlp_tab tr.pudlo td.dlp_summ p {background: #00C;}
+
+#smart_window {
+	width: 100%;
+	min-height: 550px;
+	overflow: auto; /* dla smartfona !! */
+	text-align: center;
+}
+
+#dlp2015 {
+	z-index: 1;
+	margin: 1em auto;
+	width: 90%;
+	padding: 1em 1%;
+	min-height: 550px;
+	background: RGBa(0, 150, 200, 0.90);
+   border-radius: 16px;
+}
+
+#dlp2015 h2, #dlp2015 h3 {
+	text-align: center;
+	color: #2D2D2D;
+	border-bottom: 1px solid #555;
+	text-transform: uppercase;
+	font-weight: bold;
+	text-shadow: 2px 2px 3px #555;
+	margin-bottom:.5em;
+}
+
+#dlp2015 h2.dlp_tyt {color: #FFF;}
+
+#dlp2015 h2 b {color: #FFF;}
+
+#dlp2015 h3 {font-size: 2em;}
+
+#dlp_status_livetrack {float: left; margin-left: 1em; width: 200px;}
+
+#dlp_status_livetrack iframe, #dlp_status_livetrack a {
+ width: 180px;
+ height: 20px;
+ padding: 4px 0 0;
+ scrolling; no;
+ frameborder: 0;
+ text-align: left;
+ border: 1px solid #FFF;
+ background: #09C;
+}
+
+#dlp_status_livetrack a {
+	display: inline-block;
+	text-align: center;
+	color: #FFF;
+	font-weight: bold;
+}
+
+#dlp_status_livetrack p {
+	color: #F90;
+	font: bold 1.2em/ 150% Arial;
+	text-shadow: 2px 2px 2px #000;
+}
+
+.dlp_stat {
+	width: 99%;
+	margin: .5em auto;
+ 	padding: .5em;
+	color: #FFF;
+	text-align: center;
+	border: 1px solid #FFF;
+	border-radius: 4px;
+}
+
+.dlp_stat span {color: #FFF;}
+
+.dlp_stat span b {
+	font: bold 1.8em Arial;
+	color: #Fc0;
+	padding: 0 1em;
+}
+
+
+
+
+
+
+#dlp_menu {padding: 0 0 2em; text-align: center;}
+
+#dlp_menu li {display: inline-block;}
+
+#dlp_menu li a {
+	display: block;
+	margin; 0 1em;
+	padding: .2em .5em;
+	border: 1px solid #CCC;
+	border-radius: 3px;
+	color: #FFF;
+}
+
+#dlp_menu li a:hover, #dlp_menu li a.active {color: #000; background: #CCF;}
+
+#dlp_menu a#dpl_menu_all {border: 2px solid #F90;}
+
+#dlp_menu li spin {
+	display: block;
+	margin; 0 1em;
+	padding: .2em .5em;
+	border: 1px solid #69F;
+	color: #69F;
+	border-radius: 3px;
+}
+
+#opis_dlp a {font-weight: bold; color: #FFF; text-decoration: underline;}
+#opis_dlp a:hover {color: #69F;}
+
+#opis_dlp p b {font-weight: bold;}
+
+#opis_dlp {margin: 0 auto 1em; text-align: justify; max-width: 799px;}
+#opis_dlp p { color: #D9D9FF; text-align: justify;}
+
+#opis_dlp p.center {text-align: center; padding: 1em 0;}
+
+
+#edit_dlp {clear: both; width: 100%; }
+
+.edit_dlp {
+	display: block;
+	float:left;
+	width: 200px;
+	margin: 1em;
+	padding: 1em;
+	background: #03F;
+	text-align: center; color: #FFF;
+	border-radius: 5px;
+}
+
+.ed_dlp {color: #FFF;}
+
+
+
+#sponsor {
+	display: inline-block;
+	width: 120px;
+	min-height: 200px;
+}
+
+.sponsor_icon {
+	float: left;
+	clear: right;
+	margin: 2px 0;
+	margin-left: 2px;
+}

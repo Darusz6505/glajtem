@@ -1,0 +1,1838 @@
+<?
+defined('_CMSPATH') or header('location: http://'.$_SERVER['HTTP_HOST']);
+
+/** ./cms/klasy/MojeSQL.php
+*
+* CMS - OBSŁUGA TABEL - VIP : ver.1.53
+*
+* 2021-01-09 : modyfikacje do wersji PHP 7.xx
+*
+* 2014-02-27
+*
+* 2014-02-27 -> poprawki linków według nowego schematu parametrów
+* 2013-06-14 -> poprawki notice
+* 2013-02-21 -> poprawki dla tablicy licznka przy hurtowym ładowaniu tabel
+* 2012-11-23 -> zakodowano przesyłane odnośnikami dane
+*
+* 2012-09-25 -> dodano komunikat błędu dla różnych nazw pól tabeli
+*
+* autorem skryptu jest
+* projekt.etvn.pl & aleproste.pl Dariusz Golczewski -- 2008-09-12-- UTF-8
+* skrypt nie jest darmowy!!
+* aby legalnie wykorzystywać skrypt należy posiadać wykupioną licencję lub sgodę autora
+*
+* dane wejściowe: C::get('akt_baza')
+*
+*
+*/
+
+class MojeSQL extends Common
+{
+
+ private $fx = ''; 																		//-wizualny wynik działania klasy
+ private $fz = '';
+
+ private $a = '';																			//-akcja
+ private $arch = '';																		//-wybrane archiwum do dearchiwizacji
+ private $t = '';																			//-wybrana tabela
+
+ private $tap;																				//-definiecje mySQL tabel
+ private $tan;																				//-definicje na potrzeby formatowania formularzy i walidacji
+
+ private $sqlerror = array();															//-tablica komunikatów błędów
+
+ private $menuTab = '';																	//-kod dla menu z tabelami
+
+ /**
+ *
+ *
+ *
+ */
+
+ function __construct()
+ {
+
+  if($this->upraw(9))
+  {
+
+   if(isset($_REQUEST['cod']) && $_REQUEST['cod'])
+   {
+
+	 $cod = S::linkDecode(C::odbDane($_REQUEST['cod']));
+
+	 $cod = explode(',', $cod);
+
+	 Test::trace('zdekodowany link w '.__CLASS__ , $cod);
+
+	 /** Nowy układ
+	 *
+	 * 0 = nazwa tabeli
+	 * 1 = id tabeli [1]
+	 * 2 = akcja
+	 * 3 = wartości predefiniowane
+	 *
+	 * 4 = adres strony dla powrotu
+	 * 5 = prefix dla skoku do id
+	 *
+	 */
+
+
+	 $cod = array_pad($cod, 7, '');
+
+	 if($cod[4])
+	 {
+	  $_SESSION['id-err'] = $cod[4];
+	 }
+	 else
+	  $_SESSION['id-err'] = false;
+
+
+	 $this->t  = $cod[0];
+	 $this->id = $cod[1];
+	 $this->a  = $cod[2];
+
+   }
+   else
+   {
+	 //exit('stare linki : '.__CLASS__.__LINE__);
+
+    $this->a = isset($_REQUEST['a'])?C::odbDane($_REQUEST['a']):''; 					//-akcja
+
+    $this->arch = isset($_REQUEST['arch'])?C::odbDane($_REQUEST['arch']):false; 	//-wybrane archiwum do dearchiwizacji
+
+    $this->t = isset($_REQUEST['t'])?C::odbDane($_REQUEST['t']):false; 				//-tabela
+
+   }
+
+   require_once 'hidden/wersja'._EX;
+   require_once 'hidden/def_tab'._EX;  							 							//-definicja tabel
+
+	$akc = array();
+
+   if($this->t) $akc[] = 'wybrana tabela: <i>'.$this->t.'</i>';
+
+	if($this->a) $akc[] .= 'wybrana akcja: <i>'.$this->a.'</i>';
+
+	$walid = $this->walid();
+
+	if($walid !== 'stop')
+	{
+
+	 $this->fx .= C::infoBox('adm_kombox', implode(' | ', $akc));
+	 unset($akc);
+
+	 switch($this->a)
+    {
+     case 'us' 	: $this->delTable();   				break;
+ 	  case 'cz'  	: $this->clearTable();  			break;
+ 	  case 'za' 	: $this->delAndCreateTable();  	break;
+ 	  case 'se' 	: $this->saveTable();  				break;		//-zapis do pliku pojedyńczej tabeli
+ 	  case 'lo' 	: $this->loadTable();  				break;
+ 	  case 'po' 	: $this->pokazTabela();  			break;
+	  case 'po2' 	: $this->pokaz();  					break;
+ 	  case 'zw' 	: $this->createAllTables();  		break;
+ 	  case 'de' 	: $this->defAllTables();  			break;
+ 	  case 'od' 	: $this->refreschTables();  		break;
+ 	  case 'sew' 	: $this->saveAllTables();			break;		//-zapis do plików,  wszystkich tabel ( bez tabeli systemowej )
+ 	  case 'low' 	: $this->loadAllTables(); 			break;		//-odbudowa wszystkich tabel z plików archiwum ( bez tabeli systemowej )
+ 	  case 'usw' 	: $this->delAllTables(); 			break;
+    }
+
+	 $this->menu($walid);		//-menu działań na tabelach
+
+    $this->menuTab = $this->TablesMenu($this->t, 'mysql');
+   }
+  }
+ }
+
+ /**
+ *
+ *
+ *
+ *
+ */
+
+ private function walid()
+ {
+  //test na przecinki i znak | które są głównym problemem kodowania tabel w def_tab
+
+  $kom = '';
+
+  foreach($this->tan as $k => $wa)
+  {
+
+   $defe_li = preg_split('/,{1}/', substr(trim($this->tan[$k]),1));
+   $deta_li = explode ('|', $this->tap[$k]);
+
+   $deta_li = count($deta_li);
+   $defe_li = count($defe_li);
+
+   if($deta_li != $defe_li && $deta_li > 1)
+   {
+    $kom[] = $k.'->'.$deta_li;
+   }
+  }
+
+  unset($k, $wa);
+
+  if($kom)
+  {
+   $kom = '
+		 <ol>
+		  <li>'.implode('</li>
+		  <li>', $kom).'</li>
+		 </ol>';
+
+   $kom = 'Niedozwolone znaki w definicji tabel:'.$kom;
+   $kom .= 'Ilość pól tabeli nie jest zgodna z ilością opisów dla tych pól!';
+   $kom .= '<br>Mogą to być \',\' w definicji pól lub/i znaki \'|\' w opisach pól';
+
+   $this->fx .=  C::infoBox('adm_error', $kom);
+
+   return 'stop';
+  }
+
+
+  if($ttt = $this->tablesList())  // jeśli są tabele
+  {
+
+   if($ttd = array_diff(array_keys($this->tan), $ttt))
+   {
+    $kom = 'Istnieją definicje tabel, które nie zostały jeszcze założone w aktualnej bazie!';
+    $kom .= '<br>Użyj odnośnika <b>ZW->T</b> (załóż wszystkie tabele)';
+    $kom .= '<br>Dotyczy tabel:';
+
+    $kom .= '
+		 <ul>
+		  <li>'.implode('</li>
+		  <li>', $ttd).'</li>
+		 </ul>';
+
+    $this->fx .=  C::infoBox('adm_error', $kom);
+   }
+
+   return false;
+
+  }
+  else
+   if($this->a !== 'zw')
+   {
+    $this->fx .=  C::infoBox('adm_error', 'Brak założonych tabel w aktualnej bazie danych.<br>Użyj odnośnika <b>ZW->T</b> (załóż wszystkie tabele).');
+
+    return true;
+   }
+
+ }
+
+
+ /** ./cms/klasy/MojeSQL.php
+ *
+ * menu systemowe
+ *
+ */
+
+ private function menu($bts = false) //-główne menu dla operacji na tabelach bazy danych :: ok. 2011-04-06 -> 2014-02-27 zmiana odnośników
+ {
+
+	if(!$bts)
+	 $this->fz = '
+	<a class=\'tab_ico bezp\' href=\''.S::linkCode(array(0,0,'od')).'+mysql.cmsl\' title=\'odśwież reguły w tabeli systemowej\'>O->TS</a>';
+	else
+	 $this->fz = '
+	<a class=\'tab_ico noak\' title=\'Brak tabeli systemowej\'>O->TS</a>';
+
+	$this->fz .= '
+	<a class=\'tab_ico bezp\' href=\''.S::linkCode(array(0,0,'de')).'+mysql.cmsl\' title=\'pokaż definicje wszystkich tabel\' alt=\'pokaż definicje wszystkich tabel - wykonać?\'>DW->T</a>';
+
+
+    if($this->t && !$bts) $this->fz .= '
+	<a class=\'tab_ico bezp\' href=\''.S::linkCode(array($this->t,0,'po')).'+mysql.cmsl\' title=\'pokarz definicje wybranej tabeli\' >PD->T</a>
+	<a class=\'tab_ico bezp\' href=\''.S::linkCode(array($this->t,0,'po2')).'+mysql.cmsl\' title=\'pokazuje dane z wybranej tabeli\' >PZ->T</a>
+	<a class=\'tab_ico ostr\' href=\''.S::linkCode(array($this->t,0,'lo')).'+mysql.cmsl\' title=\'zapisz do tabeli dane z pliku archiwum\' alt=\'załaduj dane z pliku - wykonać?\'>ZP->T</a>';
+    else
+     $this->fz .= '
+	<a class=\'tab_ico noak\' title=\'pokarz definicje wybranej tabeli - Brak aktywnej tabeli!\'>PD->T</a>
+	<a class=\'tab_ico noak\' title=\'pokazuje dane z wybranej tabeli - Brak aktywnej tabeli!\'>PZ->T</a>
+	<a class=\'tab_ico noak\' title=\'zapisz do tabeli dane z pliku archiwum - Brak aktywnej tabeli!\'>ZP->T</a>';
+
+
+	 if(!$bts) $this->fz .= '
+	<a class=\'tab_ico ostr\' href=\''.S::linkCode(array(0,0,'low')).'+mysql.cmsl\' title=\'do wszystkich tabel wczytuje dane z archiwum\' alt=\'wczytaj do tabel dane z wszystkich plików archiwum - wykonać?\'>ZWP-WT</a>';
+	 else
+	  $this->fz .= '
+	<a class=\'tab_ico noak\' title=\'Brak tabeli systemowej\'>ZWP-WT</a>';
+
+
+    if($this->t && !$bts) $this->fz .= '
+	<a class=\'tab_ico ostr\' href=\''.S::linkCode(array($this->t,0,'se')).'+mysql.cmsl\' title=\'zapisuje do pliku archiwum dane w wybranej tabeli\' alt=\'zapisz dane z tabeli do pliku - wykonać?\'>ZT->P</a>';
+    else
+     $this->fz .= '
+	<a class=\'tab_ico noak\' title=\'zapisuje do pliku archiwum dane w wybranej tabeli - Brak aktywnej tabeli!\'>ZT->P</a>';
+
+
+    if(!$bts) $this->fz .= '
+	<a class=\'tab_ico ostr\' href=\''.S::linkCode(array(0,0,'sew')).'+mysql.cmsl\' title=\'zapisuje wszystkie tabele do plików archiwum\' alt=\'zapisz wszystkie tabele do plików archiwum - wykonać?\'>WT->P</a>';
+	 else
+	  $this->fz .= '
+	<a class=\'tab_ico noak\' title=\'Brak tabeli systemowej\'>WT->P</a>';
+
+
+    if($this->t) $this->fz .= '
+	<a class=\'tab_ico uwag\' href=\''.S::linkCode(array($this->t,0,'us')).'+mysql.cmsl\' title=\'kasuj wybraną tabelę\' alt=\'kasuje wybraną tabelę - wykonać?\'>K->T</a>
+	<a class=\'tab_ico uwag\' href=\''.S::linkCode(array($this->t,0,'za')).'+mysql.cmsl\' title=\'kasuj wybraną tabelę i zakłóż ją na nowo\' alt=\'Kasuj wybraną tabelę i zakłada na nowo - wykonać?\'>K->T->Z</a>
+	<a class=\'tab_ico uwag\' href=\''.S::linkCode(array($this->t,0,'cz')).'+mysql.cmsl\' title=\'kasuj dane z wybranej tabeli\' alt=\'kasuje dane z wybranej tabeli - wykonać?\'>KD->T</a>';
+    else
+     $this->fz .= '
+	<a class=\'tab_ico noak\' title=\'kasuj wybraną tabelę - Brak aktywnej tabeli!\'>K->T</a>
+	<a class=\'tab_ico noak\' title=\'kasuj wybraną tabelę i zakłóż ją na nowo - Brak aktywnej tabeli!\'>K->T->Z</p></a>
+	<a class=\'tab_ico noak\' title=\'kasuj dane z wybranej tabeli - Brak aktywnej tabeli!\'>KD->T</a>';
+
+    $this->fz .= '
+	<a class=\'tab_ico bezp\' href=\''.S::linkCode(array(0,0,'zw')).'+mysql.cmsl\' title=\'zakłóż wszystkie tabele, które jeszcze nie istnieją\' alt=\'załóż wszytkie tabele, które jeszcze nie istnieją - wykonać?\'>ZW->T</a>';
+
+	 if(!$bts) $this->fz .= '
+	<a class=\'tab_ico uwag\' href=\''.S::linkCode(array(0,0,'usw')).'+mysql.cmsl\' title=\'kasuj wszystkie tabele w bazie danych\' alt=\'kasuj wszystkie tabele - wykonać?\'>KW->T</a>';
+	 else
+	  $this->fz .= '
+	<a class=\'tab_ico noak\' title=\'Brak tabeli systemowej\'>KW->T</a>';
+
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ *
+ *
+ *
+ */
+
+ private function pokazTabela()
+ {
+
+  if($this->upraw(10))
+  {
+   $this->fx .= C::infoBox('adm_kombox', 'Podgląd zawartości tabeli : <i>'.$this->t.'</i>');
+	$this->fx .= C::infoBox('adm_kombox', 'Definicja tabeli');
+
+   $this->fx .= $this->poDefTab($this->tap, $this->tan, $this->t);
+
+   $this->pokaz();
+  }
+
+ }
+
+
+ /** ./cms/klasy/MojeSQL.php
+ *
+ * kontrola uprawnień
+ *
+ */
+
+ private function upraw($status)
+ {
+  if($_SESSION['admin_stat_tmp'] < $status)
+  {
+   $this->fx .= '
+    <p class=\'error\'>Nie masz uprawnień do tej operacji!</p>';
+
+	return false;
+  }
+  else
+   return true;
+ }
+
+
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * wyświetla zawartość tabeli :: ok. 2011-04-06
+ *
+ */
+
+ private function pokaz()
+ {
+
+  if($this->upraw(10))
+  {
+
+   try
+   {
+
+	 if($tab = DB::myQuery("SELECT * FROM $this->t"))
+    {
+     $this->fx.= C::infoBox('adm_kombox', 'Zawartość tabeli : <b>'.$this->t.'</b>');
+
+	  $fxt = '';
+
+     while($ta = mysqli_fetch_assoc($tab))
+      while(list($kl, $wart) = each($ta))
+       $fxt.= '
+		 <p>'.$kl.'<span class=\'aa\'>=></span><span class=\'bb\'>'.htmlspecialchars(substr($wart,0,200)).'</span></p>';
+
+     if($fxt)
+	   $this->fx .= $fxt;
+     else
+      $this->fx .= C::infoBox('adm_alertbox', 'Tabela jest pusta');
+    }
+
+   }
+   catch(Exception $e)
+   {
+    $this->fx .= C::debug($e, 0);
+   }
+
+   unset($kl, $wart, $fxt, $tab, $ta);
+  }
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ *
+ * wyświetla definicje wszystkich tabel w bazie :: ok. 2011-04-06
+ *
+ */
+
+ private function defAllTables()
+ {
+  if($_SESSION['admin_stat_tmp'] < 10)
+   $this->fx .= '
+    <p class=\'error\'>Nie masz uprawnień do tej operacji!</p>';
+  else
+  {
+   $this->fx.= '
+		<p class=\'ods\'>definicje wszystkich tabel !</p>';
+
+   foreach($this->tan as $kl => $def)
+   {
+    $this->fx.= '
+		<p class=\'wska b t\'>'.$kl.'</p>';
+
+  	 $this->fx .= $this->poDefTab($this->tap, $this->tan, $kl);
+   }
+   unset($kl, $def);
+
+  }
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ *
+ * usuwa pojedyńczą tabelę z bazy : ok. 2011-04-06
+ *
+ */
+
+ private function delTable()
+ {
+
+  if($_SESSION['admin_stat_tmp'] < 10)
+   $this->fx .= C::infoBox('adm_errbox', 'Nie masz uprawnień do wykonania tej operacji!');
+  else
+  {
+   $this->fx .= C::infoBox('adm_kombox', 'usuwam tabelę : <i>'.$this->t.'</i>');
+
+   $kom = $this->kasTabele($this->t);
+ 																			//-automatycznie odświeżenie tabeli systemowej
+   $this->refreschTables();
+  }
+
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ *
+ * -kasuje wszystkie tabele w bazie :: ok. 2011-04-06
+ *
+ */
+
+ private function delAllTables()
+ {
+  if($_SESSION['admin_stat_tmp'] < 10)
+  	$this->fx .= C::infoBox('adm_errbox', 'Nie masz uprawnień do tej operacji!');
+  else
+  {
+
+	$this->fx .= C::infoBox('adm_kombox', 'Kasuje wszystkie tabele z aktywnej bazy.');
+
+	$aktbaza = C::get('akt_baza');
+	$prefix = C::get('db_prefix');
+
+   try
+   {
+
+	 if($tab = DB::myQuery('SHOW TABLES'))
+	 {
+	  $fx = '';
+	  $liTab = 0;
+
+     while($ta = mysqli_fetch_assoc($tab))
+	  {
+
+      if(substr($ta['Tables_in_'.$aktbaza], 0 ,strlen($prefix)) == $prefix || $prefix == '')
+	   {
+	    $t = $ta['Tables_in_'.$aktbaza];
+
+	    //if($t != C::get('tab_tab')) // usunięte 2013-02-05
+
+		  $liTab++;
+
+	     $fx .= '
+		 <p class=\'wska\'>'.$liTab.'. Usuwam tabelę : <b>'.$t.'</b></p>';
+
+	     $fx .= $this->kasTabele($t);
+
+
+	   }
+	  }
+
+	  if($fx) $this->fx .= '
+	  <div>
+	   <div id=\'adm_infbox\'>'.$fx.'
+		</div>
+	  </div>';
+
+	  unset($fx);
+
+	  if($liTab > 0)
+	  {
+	   $this->fx .= C::infoBox('adm_kombox', 'Ilość skasowanych tabel = '.$liTab);
+	  }
+
+    }
+	 else
+	     $this->fx .= C::infoBox('adm_errbox', 'Nie można odczytać listy tabel!');
+
+    unset($taba, $ta, $t, $liTab, $aktbaza);
+
+   }
+   catch(Exception $e)
+   {
+    C::debug($e, 0);
+   }
+
+  }
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ *
+ * zakłada wszystkie tabele :: ok. 2011-04-06
+ *
+ */
+
+ private function createAllTables()
+ {
+
+  if($_SESSION['admin_stat_tmp'] < 10)
+   $this->fx .= C::infoBox('adm_errbox', 'Nie masz uprawnień do tej operacji!');
+  else
+  {
+   $this->fx .= C::infoBox('adm_kombox', 'Zakładam wszystkie tabele które jeszcze nie istnieją!');
+
+	$w = '';
+	$p = false;
+	$ww = '';
+
+ 	foreach($this->tan as $kl => $dta)
+  	 if($kl != '')
+	 {
+
+		//$this->fx .= $this->zal_tab($kl, $dta, $this->tap[$kl]);
+
+		list($w, $p) = $this->zal_tab($kl, $dta, $this->tap[$kl]);
+
+		if(!$p)
+		 $this->fx .= $w;
+		else
+		 $ww .= $w;
+
+	 }
+  	 else
+     $this->fx .= C::infoBox('adm_errbox', 'Istnieje definicja tabeli, która nie ma przydzielonej nazwy w config_sql.php!');
+
+	if($ww)
+	 $this->fx .= '
+	 <div>
+	  <div id=\'adm_infbox\'>'.$ww.'
+	  </div>
+	 </div>';
+
+  //-[nazwa tabeli][definicja tabeli][definicja pól tabeli][definicja tabeli systemowej][nazwa tabeli systemowej]---
+
+  	unset($kl, $dta);
+
+  	$this->refreschTables();						//-odświerza tabelę systemową
+  }
+
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ */
+
+ private function clearTable() 				//-czyści tabelę z danych :: ok. 2011-04-06
+ {
+  if($_SESSION['admin_stat_tmp'] < 10)
+	 $this->fx .= '
+	 <p class=\'error\'>Nie masz uprawnień do tej operacji!</p>';
+  else
+  {
+
+  $this->fx .= '
+	<p class=\'ods\'>kasuję dane z tabeli : <span>'.$this->t.'</span></p>';
+
+  //include 'sql/kasplik.php'; //-kasowanie plików powiązanych z tabelą !!!!!!???????
+
+  try
+  {
+
+	if(DB::myQuery("TRUNCATE TABLE $this->t"))
+    $this->fx .= '
+	 <p class=\'ok\'>tabela wyczyszczona prawidłowo.</p>';
+
+  }
+  catch(Exception $e)
+  {
+   $this->fx .= '<p class=\'error\'>Tabela nie została wyczyszczona!</p>';
+   $this->fx .=  C::debug($e, 0);
+  }
+
+  unset($tab);
+  }
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ *
+ * if($a == za)
+ * zakłada tabelę, którą pierw kasuje 2010-02-28 ok. -> 2011-12-18
+ */
+
+ private function delAndCreateTable()
+ {
+  if($_SESSION['admin_stat_tmp'] < 10)
+ 	$this->fx .= '
+	 <p class=\'error\'>Nie masz uprawnień do tej operacji!</p>';
+  else
+  {
+   $this->fx = '
+	<p class=\'ods\'>kasuję tabelę i zakładam ponownie! <b class=\'ok b\'>'.$this->t.'</b></p>';
+
+   $this->fx .= $this->kasTabiZal($this->t, $this->tan, $this->tap , $this->tan[C::get('tab_tab')], C::get('tab_tab'), C::get('akt_baza'));
+
+   $this->refreschTables();						//-na koniec odświerza tabelę systemową
+  }
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * odświerza tabelę systemową - ok. 2011-04-06 -> 2011-12-18
+ * 1. usunąć tabelę
+ * 2. założyć od nowa
+ * 3. wczytać definicje tabel
+ *
+ * pozwala to modyfikować definicję tabel bez utraty danych zapisanych wcześniej do pliku
+ * jeśli to konieczne dane w pliku mozna zmodyfikować tak aby mogły być wczytane do zmodyfikowanej tabeli
+ */
+
+ private function refreschTables()
+ {
+  $tabsys = C::get('tab_tab');
+
+  $this->fx.= C::infoBox('adm_kombox', 'Odświeżam tabelę systemową');
+
+  if($this->isTable($tabsys))  // jeśli jest tabela systemowa
+  {
+
+   try
+	{
+    if(!DB::myQuery("DROP TABLE ".$tabsys))
+	  $this->fx .= C::infoBox('adm_errbox', 'Tabela systemowa nie została usunieta!');
+   }
+	catch(Exception $e)
+	{
+     C::debug($e, 0);
+   }
+
+  }
+  else
+	$this->fx .= C::infoBox('adm_errbox', 'Nie można usunąć tabeli systemowej, tabela nie istnieje!!');
+
+
+  try
+  {
+   if(DB::myQuery("CREATE TABLE ".$tabsys.$this->tan[$tabsys]))		//-zakłada tabelę systemową na nowo
+   {
+    $aktb = C::get('akt_baza');
+	 $pref = C::get('db_prefix');
+	 $fxx = '';
+
+	  if($tab = DB::myQuery('SHOW TABLES'))
+      while($ta = mysqli_fetch_assoc($tab))
+		if(substr($ta['Tables_in_'.$aktb], 0, strlen($pref)) == $pref || $pref == '')
+       foreach($ta as $p)
+        if($this->tap[$p]) 																						//-tylko te tabele, które mają definicje pól
+	      $fxx .= $this->zapdt($tabsys, $this->tan[$p], $this->tap[$p], $p);						//-zapis definicji pól do tabeli systemowej
+
+	  if(!$fxx)
+	   $this->fx .= C::infoBox('adm_konbox', 'Tabela systemowa odświeżona prawidłowo.');
+	  else
+	  {
+	   $this->fx .= C::infoBox('adm_errbox', $fxx);
+		unset($fxx);
+	  }
+
+   }
+	else
+	 $this->fx .= C::infoBox('adm_errbox', 'Tabela systemowa nie została założona!');
+
+  }
+  catch(Exception $e)
+  {
+   C::debug($e, 0);
+  }
+
+  unset($tab, $ta, $p, $aktb, $pref, $tabsys);
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * zapis pojedyńczej tabeli do pliku
+ * w nowym katalogu = archiwum
+ *
+ * if($a == se) //-zapisuje do lokalnego pliku, dane z tabeli 2010-03-06 ok.
+ *
+ */
+
+ private function saveTable()
+ {
+
+  if($this->upraw(10))
+  {
+
+   $this->fx = '
+		<p class=\'wska\'>Zapisuje do pliku dane z tabeli : <b>'.$this->t.'</b></p>';
+
+   $cmsTStart = microtime();
+
+   $this->fx .= $this->zapDoPliku($this->t, $this->tan[$this->t], $this->tap[$this->t], date('Ymd_His', time()).'/');
+   //-ostatni parametr to nazwa aktualnego katalogu tworzonewgo archiwum
+
+   $this->fx .= '
+ 		<p class=\'czas\'>Czas zapisu : '.$this->czasOper($cmsTStart).'</p>';
+
+   unset($cmsTStart);
+
+	//$this->kasujArchiwum(); - to może spowodować utratę archiwum ze wszystkimi tabelami !!!
+
+  }
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ *
+ * if($a == lo)
+ * wczytanie danych z pliku do wybranej tabeli 2010-02-28 ok.
+ *
+ */
+
+ private function loadTable()
+ {
+
+  if($this->upraw(10))
+  {
+
+   if($this->arch) 			//-akcja dla wybranego archiwum
+   {
+
+    $this->fx = '
+		<p class=\'wska\'>wczytuję dane z pliku do tabeli : <b class=\'ok b\'>'.$this->t.'</b></p>';
+
+    $cmsTStart = microtime();
+
+    $this->fx .= $this->kasTabiZal($this->t, $this->tan, $this->tap , $this->tan[C::get('tab_tab')], C::get('tab_tab'), C::get('akt_baza'));
+
+    $this->fx .= '
+ 		<p class=\'czas\'>Czas kasowania i założenia tabeli : '.$this->czasOper($cmsTStart).'</p>';
+
+    $cmsTStart = microtime();
+
+    $this->fx .= $this->zaDoTabeli(C::get('tab_tab'), $this->t, $this->arch);
+
+    $this->fx .= '
+ 		<p class=\'czas\'>Czas wczytania danych do tabeli : '.$this->czasOper($cmsTStart).'</p>';
+
+
+	 unset($cmsTStart);
+   }
+   else
+	 $this->wybArchiwum($this->t);	//-wybór archiwum
+
+  }
+
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * - archiwizacja do plików wszystkich tabel oraz plików 2010-05-11
+ *
+ */
+
+ private function saveAllTables()
+ {
+
+  //-archiwizacja plików, tylko tych, których jeszcze nie ma w archiwum
+
+  $cmsTStart = microtime();
+
+  $dirs1 = array_map("basename", glob(C::get('fotyPath').'*.*'));				//-tablica aktualnych plików
+
+  $dirs2 = array_map("basename", glob(_PATH_ARCH_FOTO.'*.*'));					//-tablica plików z archiwum
+
+  $this->fx .= '<p>aktualna ilość plików : '.count($dirs1).'</p>';
+  $this->fx .= '<p>iość plików w archiwum : '.count($dirs2).'</p>';
+
+  $dirs1 = array_diff($dirs1, $dirs2);
+
+  rsort($dirs1); 																				//-ustawia nowe klucze od 0 do n
+
+  $licz_dir1 = count($dirs1);
+
+  $this->fx .= '<p>ilość plików do archiwizacji : '.$licz_dir1.'</p>';
+
+  $copy = 0;
+
+  if($licz_dir1>0)
+  {
+   if(!is_dir(_PATH_ARCH_FOTO)) mkdir(_PATH_ARCH_FOTO, 0777); 					//-zakłada katalog główny archiwum jeśli taki jeszcze nie istnieje
+
+   for($i = 0; $licz_dir1 > $i; $i++)
+   {
+
+    if(!copy(C::get('fotyPath').$dirs1[$i], _PATH_ARCH_FOTO.$dirs1[$i]))
+	  $this->fx .= '
+		<p class=\'error\'>nie powiodło się kopiowanie pliku : '.$dirs1[$i].'</p>';
+	 else
+	  $copy++;
+   }
+
+   $this->fx .= '<p></p><p class=\'ok\'>Dokonano archiwizacji : '.$copy.' plików</p>';
+  }
+
+  unset($copy, $dirs1, $dirs2, $licz_dir1, $i);
+
+  $this->fx .= '
+ 		<p class=\'czas\'>Całkowity czas obsługi archiwizacji plików : '.$this->czasOper($cmsTStart).'</p>';
+
+
+  try
+  {
+   if($tab = DB::myQuery('SHOW TABLES'))
+   {
+
+	 $this->fx .= '
+		<p class=\'wska\'>Zapisuje do plików dane z wszystkich tabel</p>';
+
+    $kat_arch = date('Ymd_His', time()).'/';
+
+	 $prefix = C::get('db_prefix');
+	 $prefix_len = strlen(C::get('db_prefix'));
+	 $baza   = C::get('akt_baza');
+	 $tabtab = C::get('tab_tab');
+
+	 $cmsTStartW = microtime();		//-pomiar czasu dla wszystkich tabel
+
+    while($ta = mysqli_fetch_assoc($tab))
+	 {
+     if(substr($ta['Tables_in_'.$baza], 0, $prefix_len) == $prefix || $prefix == '')
+	  {
+	   $t = $ta['Tables_in_'.$baza];
+
+	   if($ta['Tables_in_'.$baza] != $tabtab)
+	   {
+	    $cmsTStart = microtime();
+
+	    $this->fx .= $this->zapDoPliku($t, $this->tan[$t], $this->tap[$t], $kat_arch);
+
+	    $this->fx .= '
+ 		 <p class=\'czas\'>Czas zapisu: '.$this->czasOper($cmsTStart).'</p>';
+	   }
+	  }
+	 }
+
+	 unset($prefix, $prefix_len, $tabtab, $baza);
+
+    $this->fx .= '
+ 		<p class=\'czas\'>Czas zapisu wszystkich tabel : '.$this->czasOper($cmsTStartW).'</p>';
+   }
+
+   unset($tab, $ta, $t, $kat_arch, $cmsTStart, $cmsTStartW);
+
+	$this->kasujArchiwum();
+
+  }
+  catch(Exception $e)
+  {
+   $this->fx .= '<p class=\'error\'>Nie można odczytać listy tabel, archiwizacja nie została wykonana!</p>';
+   $this->fx .=  C::debug($e, 0);
+  }
+
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * kasuje najstarsze archiwum ponad limit
+ *
+ */
+
+ private function kasujArchiwum()
+ {
+
+  $dirs = glob(_PATH_ARCH.'*');											//-odczytujemy ilość zapisanych archowów
+
+  sort($dirs);
+
+  while(count($dirs) > _LIMIT_ARCH)										//kasujemy najstarsze, czyli pierwsze na liscie archiwum, aż do uzyskania limitu
+  {
+   $this->fx .= '
+		<p class=\'wska b\'>Kasuje najstarsze archiwum! max.ilość punktów archiwizacji = '._LIMIT_ARCH.'</p>';
+
+   $this->fx .= $this->rrmdir($dirs[0]);
+
+   array_shift($dirs);
+  }
+
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * wczytuje do wszystkich tabel dane z odpowiednich plików jesli tylko są 2010-02-28 ok.
+ *
+ * wczytywane są dane tylko do tych tabel, których archiwa zanjduja się w wybranym katalogu
+ * i tylko te archiwa, dla których istnieją tabele
+ *
+ */
+
+ private function loadAllTables()
+ {
+
+  if($this->arch)		//-jeśli jest archiwum
+  {
+
+   $dirs = glob(_PATH_ARCH.$this->arch.'/'.C::get('db_prefix').'*.php');
+
+   if($dirs)
+   {
+	 $cmsTStartW = microtime();
+
+	 $liczPlik = 0;
+	 $wt = '';
+	 $erli = 0;
+
+    foreach($dirs as $dir)
+    {
+
+     $t = substr(basename($dir), 0, -4);			//-nazwa pliku = nazwa tabeli
+
+	  if($t != C::get('tab_licznik', false))		//-nie wczytuje hurtem tabeli licznika, możliwe tylko dla pojedyńczej akcji
+	  {														//-false bo tablica może być nie używana (poprawki po 2013-02-21)
+
+		if($this->isTable($t))							//-jeśli taka tabela istnieje w bazie danych serwisu
+		{
+
+       $wt .= '
+		 <p>plik : '.$t.' -> tabela : '.$t.'</p>';
+
+	    $cmsTStart = microtime();
+
+       $wt .= $this->kasTabiZal($t, $this->tan, $this->tap , $this->tan[C::get('tab_tab')], C::get('tab_tab'), C::get('akt_baza'));
+
+	    $wt .= '
+ 		 <p class=\'czas\'>Czas kasowania i założenia tabeli : '.$this->czasOper($cmsTStart).'</p>';
+
+	    $cmsTStart = microtime();
+
+       if(!$er = $this->zaDoTabeli(C::get('tab_tab'), $t, $this->arch))
+		 {
+		  $wt .= '
+		  <p class=\'ok\'>Dane z pliku wczytane do tabeli prawidłowo.</p>';
+		 }
+		 else
+		 {
+		  $wt .= $er;
+
+		  $erli++;
+
+		  unset($er);
+		 }
+
+	    $wt .= '
+ 		 <p class=\'czas\'>Czas wczytania danych do tabeli : '.$this->czasOper($cmsTStart).'</p>
+		 <br />';
+
+		 $liczPlik++;
+		}
+	  }
+
+
+    }
+
+	 if($liczPlik > 0)
+	 {
+	  $this->fx .= C::infoBox('adm_kombox', 'Wczytuje dane do wszystkich tabel z odpowiednich plików ( jeśli istnieją )');
+ 	  $this->fx .= C::infoBox('adm_kombox', 'Całkowity czas dearchiwizacji : '.$this->czasOper($cmsTStartW));
+
+	  if($erli > 0)
+		$this->fx .= C::infoBox('adm_errbox', 'Wystąpiły błędy zapisu do tabel! Ilość tabel z błedami zapisu: '.$erli.' Sprawdź na liście.');
+
+	  if($wt) $this->fx .= '
+	  <div>
+	   <div id=\'adm_infbox\'>'.$wt.'
+		</div>
+	  </div>';
+
+	 }
+	 else
+	  $this->fx = C::infoBox('adm_errbox', 'Brak Tabel w Bazie danych, dla kórych istnieje archiwum, lub jakiekolwiek tabele nie są jeszcze założone!');
+
+
+	 unset($cmsTStartW, $cmsTStart);
+   }
+   else
+    $this->fx .= C::infoBox('adm_errbox', 'Archiwum jest puste');
+
+  }
+  else
+   $this->wybArchiwum();	///-lista katalogów archiwum
+ }
+
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * wybór archiwum (archiwów) które zawierają dane dla co najmniej 1 tabeli
+ *
+ */
+
+ private function getDateArch($d)
+ {
+
+   $rok = substr($d, 0, 4);
+	$mon = substr($d, 4, 2);
+	$day = substr($d, 6, 2);
+	$h = substr($d, 9, 2);
+	$m = substr($d, 11, 2);
+	$s = substr($d, -2);
+
+  return $day.'-'.$mon.'-'.$rok.' '.$h.':'.$m.':'.$s;
+ }
+
+
+ private function wybArchiwum($t = '')
+ {
+
+   if(!is_dir(_PATH_ARCH) && defined(_PATH_ARCH))
+   {
+    $this->fx .= C::infoBox('adm_errbox', 'Brak głównego katalogu archiwum : '._PATH_ARCH);
+   }
+   else
+   {
+    $dirs = glob(_PATH_ARCH.'*');
+
+	 if($t != '')
+	  $t .= ',';
+	 else
+	  $t = '';
+
+	 $lf = 0;
+
+	 foreach($dirs as $dir)
+	 {
+
+	  $wt[] = '<a class=\'folder_arch\' href=\''.$t.$this->a.','.basename($dir).',mysql.cmsl\' title=\''.$this->getDateArch(basename($dir)).'<br />plików : '.count(glob($dir.'/'.C::get('db_prefix').'*.php')).'\'>
+	   <img src="./cms/skin/folder.jpg" alt=\'\'><b>'.++$lf.'</b></a>';
+	 }
+
+
+	 if($wt)
+	 {
+	  $this->fx .= C::infoBox('adm_kombox', 'Wybierz archiwum:');
+	  $this->fx .=	implode(' . ', $wt);
+	  $this->fx .= C::infoBox('adm_kombox', 'Ustaw wskaźnik myszki nad wybranym folderem aby odczytać datę archiwum i ilość zawartych w archiwum plików.');
+
+	 }
+	 else
+	  $this->fx .= '<p class=\'error\'>Brak archiwum : '._PATH_ARCH.'</p>';
+
+    unset($dirs, $dir, $wt);
+   }
+
+
+ }
+
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ */
+
+ private function poDefTab($tap, $tan, $t)					// wyświetla definicje pojedyńczej tabeli na podstawie def_tab.php
+ {
+  $opisy = explode('|', $tap[$t]);								//-opisy pól
+  $od = explode(',', substr($tan[$t], 1));					//-wiersze definicji tabeli
+
+  $ll = count($od);
+
+  $fx = '';
+
+  for($i=0; $ll>$i; $i++)
+   $fx .= '
+	<p class=\'cms_pok_tab\'>'.$od[$i].'<b> -> [ '.$opisy[$i].' ]</b></p>';
+
+  unset($i, $ll, $od, $opisy, $t, $tap, $tan);
+
+  return $fx;
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ */
+
+ private function kasTabele($t)
+ {
+ // SQL CMS -> kasuje wszystkie tabele z bazy danych MySQL
+ // projekt.etvn.pl & aleproste.plDariusz Golczewski -- 2008-09-10 -- UTF-8
+
+  if(!DB::MyQuery("DROP TABLE $t"))
+   return 'Tabela nie została usunięta!';
+  else
+   return false;
+
+  /*
+  try
+  {
+   $tab = mysql_query("DROP TABLE $t");
+
+   if(!$tab)
+    throw new Exception(mysql_error());
+   else
+    return '<p class=\'ok\'>Tabela usunięta prawidłowo.</p>';
+  }
+  catch(Exception $e)
+  {
+   return '
+	<p class=\'error\'>tabela nie została usunięta!</p>
+	'.C::debug($e, 0);
+  } */
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ *
+ *
+ *
+ */
+
+ private function zapdt($tabela, $def, $defp, $naz)
+ {
+  $li = C::get('akt_conect');
+  //-[nazwa tabeli systemowej][definicja tabeli][definicja pól tabeli][nazwa tabeli]
+
+  //-funkcja zapisuje definicje tabeli do tabeli systemowej
+
+  $k = preg_split('/,{1}/', substr(trim($def),1));
+
+  foreach($k as $p)
+  {
+   $p = preg_replace("/[[:blank:]]{1,}/", ' ', trim($p));  //-zamienia więcej niż 1 spację na dokładnie 1 spację
+
+	$tpo = explode(' ',trim($p));
+
+   $defe[] = $tpo[0].'|'.$tpo[1];
+  }
+
+  //-definicja tabeli -> nazwa pola i typ // , pomija id
+
+  $deta = explode ('|',$defp);
+
+  $deta_li = count($deta);
+  $defe_li = count($defe);
+
+  if($deta_li != $defe_li)
+  {
+	return 'Niedozwolony znak w opisie tabeli <i>'.$tabela.'</i> w def_tab może to jest znak \'|\'';
+  }
+
+  $defd = '';
+
+
+  /*
+  echo '<p>'.$deta_li.'</p>';
+
+  echo '<pre>';
+  print_r($deta);
+  echo '</pre>';
+
+  echo '<p>############################</p>';
+
+  echo '<pre>';
+  print_r($defe);
+  echo '</pre>'; */
+
+
+
+
+  for($i=0; $deta_li > $i; $i++)
+   $defd .= ", n".$i."='".$deta[$i]."|".$defe[$i]."'";
+
+  unset($deta_li);
+
+  //-przygotowanie treści zapytania SET pole='wartosc', ...
+
+  //-sprawdza czy jest zapis w tabeli ---
+  //-kolejność działań jest prawidłowa, gdyż jeśli wpis już istnieje to jest tylko odświeżany !!!
+
+  try
+  {
+   $tab = mysqli_query($li, "SELECT nazwa FROM $tabela WHERE nazwa='$naz'");
+
+   if(!$tab)
+    throw new Exception(mysql_error());
+   else
+   {
+    $ta = mysqli_fetch_row($tab);
+
+	 try
+	 {
+     if($ta[0] != '')
+     {
+      $defd = substr($defd,1); 															//-usunięcie przecinka z przodu
+
+	   $tab = mysqli_query($li, "UPDATE $tabela SET $defd WHERE nazwa='$naz'");
+     }
+     else
+      $tab = mysqli_query($li, "INSERT INTO $tabela SET nazwa='$naz' $defd");
+
+     if(!$tab) throw new Exception(mysql_error());
+
+	  }
+	  catch(Exception $e)
+	  {
+	   return '
+		<p class=\'error\'>definicje pól nie zostały zapisane!</p>'.C::debug($e, 0).'->'.$defd;
+	  }
+
+   }
+   return;
+  }
+  catch(Exception $e)
+  {
+   return C::debug($e, 0);
+  }
+
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * kasuje tabelę i zakłada na nowo -------------------- 2010-02-28
+ *
+ *
+ */
+
+ private function kasTabiZal($t, $tan, $tap , $defx, $t_tab, $baza)
+ {
+
+  try
+  {
+
+	if(DB::myQuery("DROP TABLE $t"))
+	{
+
+	 list($w, $p) = $this->zal_tab($t, $tan[$t], $tap[$t], $defx, $t_tab, $baza); 	//-zakładanie tabeli
+
+      if(!$p)
+		{
+		 $this->fx .= $w;
+		 return;
+		}
+		else
+		 return '<p class=\'ok\'>tabela usunięta prawidłowo.</p>'.$w;
+
+	}
+   else
+	 return C::infoBox('adm_errbox', 'Tabela nie została usunięta, więc nowa nie może być założona!');
+
+  }
+  catch(Exception $e)
+  {
+   C::debug($e, 0);
+  }
+
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ *
+ * 2013-02-05
+ *
+ */
+
+ private function zal_tab($naz, $def, $defp)
+ {
+  //-[nazwa tabeli][definicja tabeli][definicja pól tabeli]
+
+  $fx = '';
+  $tpt = false;
+
+  $x1 = explode('_', $naz);
+
+  if(reset($x1) == substr(C::get('db_prefix'), 0, -1)) 			//-test czy zdefiniowana jest nazwa tabwli w config_sql
+  {
+   try
+   {
+
+    if(!$tab = DB::MyQuery('SHOW TABLES'))
+	 {
+	  return array(C::infBox('adm_errbox', 'Nie można odczytać listy tabel!'), false);
+	 }
+    else
+     while($ta = mysqli_fetch_assoc($tab))
+     {
+	   if($ta['Tables_in_'.C::get('akt_baza')] == $naz) $tpt = true;
+     }
+
+
+ 	  if(!$tpt) 									//-zakładana tabeli, która jeszcze nie istnieje
+     {
+
+      if(!DB::MyQuery("CREATE TABLE $naz $def"))
+      {
+
+	    $fx .= '
+		<p class=\'error\'>nie można utworzyć tabeli!! -> <b>'.$naz.'</b></p>
+		<p class=\'wska t\'>definicja tabeli -> '.preg_replace("/,/", ',<br />', $def).'</p>';
+
+      }
+      else
+	    $fx.='
+		<p class=\'wska\'>została utworzona tabela -> <b class=\'b\'>'.$naz.'</b></p>';
+
+     }
+     else
+      $fx .='
+		<p class=\'error\'>już istnieje tabela! -> <b class=\'wska b\'>'.$naz.'</b></p>';
+
+
+
+   }
+   catch(Exception $e)
+	{
+	 $fx .=  C::debug($e, 0);
+	}
+
+   unset($tab, $ta);
+
+	return array($fx, true);
+  }
+  else
+  {
+   $fx = C::infBox('adm_errbox', 'Nie zdefiniowana nazwa tabeli <i>'.$naz.'</>');
+
+   unset($tpt, $x1);
+
+   return array($fx, false);
+  }
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ */
+
+ private function zapDoPliku($t, $tan, $tap, $akt_kat)
+ {
+  // SQL CMS -> zapisuje dane z tabeli do pliku ------- 2010-05-13 -> 2011-02-14 -> 2011-02-24
+  // zmiana katalogu docelowego i usuniecie z nazwy przedrostka klucza
+  // katalog docelowy definiowany w config_cms.php
+
+  // projekt.etvn.pl & aleproste.pl Dariusz Golczewski -- 2009-11-11 --- UTF-8
+
+  /* zapisuje dane z tabeli do pliku o nazwie tabeli -------------
+
+	- odczytuje tabelę i zapisuje dane do pliku tekstowego o nazwie = nazwie tabeli
+	- jeśli tabela nie jest pusta podejmujemy akcję
+
+  1. generuje unikalny znacznik, który posłuży do dekodowania
+  2. odczytuje strukturę tabeli w postaci nazw pól tabeli oddzielonych przecinkami
+  3. odczytuje rekordy z tabeli oddzielone przecinkami w pojedyńczych apostrofach
+  4. na końcu każdego rekordu dokleja ten sam unikalny znacznik
+  5. zapisuje wszystko do pliku tekstowego w formacie:
+  [długość znacznika][znacznik][nazwy pół,][znacznik][rekord1][znacznik]....[rekord nty][znacznik]\n
+
+  Taki zapis pozwoli wczytać dane do tabeli o nawet zmodyfikowanej strukturze, jeśli nastąpi zmiana nawy pola
+  przed wczytaniem należy poprawić odpowiednio nazwy w pliku !!!
+  */
+
+  $li = C::get('akt_conect');
+
+  $tap = explode('|', $tap); //-parametry dla pól tabeli
+
+  try
+  {
+   $tab = mysqli_query($li, "SELECT * FROM $t"); 			//-odczyt rekordów z tabeli
+
+   if(!$tab)
+    throw new Exception(mysqli_error());
+   else
+   {
+    $pusta = mysqli_fetch_row($tab);
+
+    if($pusta[0]!='')
+    {
+	  $zmlok = explode('ENGINE', $tan);												//-oddziela definicje za nawiasem ENGINE=MYISAM CHARACTER ...
+	  $zmlok = reset($zmlok);															//-oddziela definicje za nawiasem ENGINE=MYISAM CHARACTER ...
+
+	  $k = preg_split('/(\s+)([^,]*)(,*)(\s*\W*\s*)/', trim(substr($zmlok,1,-1)));
+
+     $i=0;
+	  $ipliki = array();
+
+     while($k[$i])
+	  {
+	   $k1 = explode('_', $k[$i]);
+
+	   if(substr(end($k1), 0, 3) == 'fot')
+	   {
+		 $k2 = explode('^', $tap[$i]);
+
+	    $pplik = explode(';', end($k2));
+
+		 $wpliki = '';
+
+		 foreach($pplik as $ppp)
+		 {
+		  $ppx = explode(',', $ppp);
+
+		  if(isset($ppx[2]))
+		   if(trim($ppx[2]))
+			 $wpliki .= $ppx[2]; 															//-przedrostek
+		 }
+
+		 $ipliki[] = $i;																		//-tabela indeksów i parametrów pól plikowych w tabeli
+		 $ppliki[] = $wpliki;
+
+		 unset($pplik, $ppp, $ppx, $wpliki, $k2);
+	   }
+	   //echo '<p>'.substr(end(explode('_', $k[$i])), 0, 3).'</p>';
+
+	   $zap[] = $k[$i++];
+     }
+
+	  $lpliki = count($ipliki);
+
+     unset($zmlok, $i, $k, $k1);
+
+	  if($zap) $zap = implode(',', $zap); //.$znkw;  ??							//-wiersz z nazwami pól tabeli zakończony unikalnym znacznikiem
+
+	  //-END pierwszy wiersz = wiersz nazw pól tabeli
+
+     $znkw = uniqid(rand()); 																//-znacznik rodzielenia rekordów przy dekodowaniu
+     $dlzn = strlen($znkw);																//-długość znacznika
+
+	  try
+	  {
+      $tab = mysqli_query($li, "SELECT * FROM $t");
+
+		$fxp = '';
+
+      if(!$tab)
+	    throw new Exception(mysqli_error());
+      else
+       while($ta = mysqli_fetch_row($tab))
+       {
+		  if($lpliki)															//-jeśli tabela posiada pola plikowe to tworzymy tablicę plików do archiwizacji
+		   for($i = 0; $i<$lpliki; $i++)
+		   {
+			 if($ta[$ipliki[$i]])
+			 {
+			  $pliki[] = $ta[$ipliki[$i]];
+
+			  $ppp = explode('_', $ppliki[$i]);
+
+			  foreach($ppp as $ppx)
+			   if($ppx)
+				 $pliki[] = $ppx.'_'.$ta[$ipliki[$i]];
+
+			  unset($ppp, $ppx);
+			 }
+		   }
+		  $fxp .= "'".implode("' ,'", $ta)."'".$znkw;
+       }
+	  }
+	  catch(Exception $e)
+	  {
+	   return C::debug($e, 0);
+	  }
+
+     //-zapis do pliku w formacie [znacznik][nazwy pól tabeli][znacznik][rekordy tabeli[znacznik]]
+
+	  if(!is_dir(_PATH_ARCH)) mkdir(_PATH_ARCH, 0777); 							//-zakłada katalog główny archiwum jeśli taki jeszcze nie istnieje
+
+	  if(!is_dir(_PATH_ARCH.$akt_kat)) mkdir(_PATH_ARCH.$akt_kat, 0777);		//-zakłada katalog kolejnej archiwizacji
+
+	  $h = fopen(_PATH_ARCH.$akt_kat.$t.'.php', 'w');
+
+     fputs($h, '<? exit(\'sory\');?>'.$dlzn.$znkw.$zap.$znkw.$fxp."\n");
+
+     fclose($h);
+    }
+    else
+     return '
+		<p class=\'error\'>tabela <b class=\'b\'>'.$t.'</b> jest pusta!</p>';
+
+    unset($pusta, $znkw, $dlzn, $h, $zap);
+
+	 unset($pusta, $znkw, $dlzn, $h, $zap, $pliki, $ipliki, $ppliki);
+
+    return '
+		<p class=\'ok\'>Zapis wykonany prawidłowo <b class=\'b\'>'.$t.'</b></p>
+		<p>pól plikowych -> '.$lpliki.'</p>';
+   }
+  }
+  catch(Exception $e)
+  {
+   return  C::debug($e, 0);
+  }
+
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * SQL CMS -> wczytuje dane z pliku do tabeli ------- 2010-03-06 -> 2011-02-14
+ *
+ * kasuje i zakłada tabelę, odczytuje plik o nazwie = nazwie tabeli, obrabia format i wczytuje do tabeli
+ * include 'cms/sql/kasizal.php';
+ * kasuje tabelę i zakłada ponownie strukturę tabeli
+ * utworzenie tablicy [ $pola ] zawierającej nazwy pól aktualnej tablicy
+ */
+
+ private function zaDoTabeli($t_tab, $t, $arch)
+ {
+  $eror = '';
+
+  try
+  {
+
+	if($tab = DB::myQuery("SHOW COLUMNS FROM $t"))							//-odczytanie pól tabeli bezpośrednio z tabeli, bez tabeli systemowej
+    while($tb = mysqli_fetch_assoc($tab))
+     $dpola[] = $tb['Field'];
+
+
+  if($dpola)
+  {
+   if($t and file_exists(_PATH_ARCH.$arch.'/'.$t.'.php')) 										//-jeśli istnieje plik do wczytania
+   {
+    $nazpl = _PATH_ARCH.$arch.'/'.$t.'.php';
+    $h = fopen($nazpl, 'rb');
+    $tr = fread($h, filesize($nazpl));
+    fclose($h);
+
+    if($tr)
+    {
+	  $tr = substr($tr, 18);																				//-wycina pierwsze 18 znaków (zabezpieczenie pliku przed odczytem)
+
+     $dzna = substr($tr,0,2);										  										//-długości znacznika
+     $znac = substr($tr,2,$dzna);																		//-wartości znacznika
+
+     $rek  = explode($znac, substr($tr, $dzna+2)); 												//-podział na rekordy
+
+     $pola = explode(',', $rek[0]); 																	//-pierwszy rekord = nazwy pól tabeli -> $pola[i] gdzie i=[0..n]
+
+     $lopol = count($pola);																				//-licznik pól w tabeli
+
+     $lirek = count($rek)-1;																			   //-licznik rekordów z danymi
+
+	  /*
+	  $eror .= '
+		 <p class=\'cms_kom\'>liczba pól : '.$lopol.'</p>
+		 <p class=\'cms_kom\'>liczba wierszy : '.$lirek.'</p>';
+     */
+
+     for($j=1; $lirek>$j; $j++) 																	  	   //-pętla po rekordach
+     {
+      $wapu = explode("' ,'", substr($rek[$j],1,-1)); 											//-rozdziela rekord na pola
+
+      for($i=0; $lopol>$i; $i++) 																		//-wyprodukowanie zapytania mysql
+      {
+	    $wapu[$i] = trim($wapu[$i]);
+
+		 /*
+	    if($pola[$i] == dapu || $pola[$i] == dado)												  //-jeśli daty publikacji lub doodania są puste
+	     if($wapu[$i] == '')
+		   $wapu[$i] = $teraz;																			  //-to wstawia aktualna datę
+       */
+
+	    if(in_array($pola[$i], $dpola))
+	     $zap[] = $pola[$i].'=\''.$wapu[$i].'\'';
+
+	   }
+
+	   if(is_array($zap))
+	   {
+	    $pytanie = implode(', ', $zap);
+	    unset($zap);
+
+	    DB::myQuery("INSERT INTO $t SET $pytanie"); 										//-zapis do tabeli
+
+	   }
+	   else
+	   {
+	    $j = $lirek + 10;
+	    $eror .= '
+		 <p class=\'cms_error\'>błąd pliku : '.$t.', nie można złozyć zapytania<br />porównaj nazwy pól tabeli w def_def i w pliku archiwum!</p>';
+	   }
+     }
+    }
+    else
+     $eror .= '
+		<p class=\'cms_error\'>błąd czytania pliku : '.$t.'</p>';
+   }
+   else
+    $eror .= '
+		<p class=\'cms_error\'>brak w achiwum pliku : '.$t.'</p>';
+  }
+  else
+   $eror .= '
+		<p class=\'cms_error\'>brak defincji tabeli w tabeli systemowej : '.$t.'</p>';
+
+  unset($i, $j, $t, $tab, $wapu, $dpola, $pola, $wynik, $pytanie);
+
+  if($eror)
+   return 'historia operacji:</p>'.$eror;
+  else
+   return false;
+
+  }
+  catch(Exception $e)
+  {
+   return C::debug($e, 0);
+  }
+
+ }
+
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * kasowanie plików powiazanych z tabelą
+ * UWAGA! tylko tych zapisanych w tabeli o nazwie pola według klucza -> fot lub plik
+ */
+
+ private function delFiles()
+ {
+
+  try
+  {
+
+	//-odczytanie pól tabeli $t i sprawdzenie czy są pola plikowe
+
+	if($tabe = DB::myQuery("SELECT * FROM ".C::get('tab_tab')." WHERE nazwa='$this->t'"))
+   {
+    $ta = mysqli_fetch_row($tabe);
+
+    $i=2;
+    while($ta[$i])
+    {
+     $zz = explode('|',$ta[$i++]);
+
+     if(substr($zz[1],0,3)=='fot' || substr($zz[1],0,4)=='plik')
+     {
+      $tp = explode('^',$zz[0]);
+	   $tx = explode(';',$tp[3]);
+
+	   $j = 0;
+
+	   while($tx[$j])
+	   {
+	    $ty = explode(',',$tx[$j++]);
+
+	    if($ty[2]) $tz[] = $ty[2];															//-tablica przedrostków dla pola
+	   }
+
+	   $pol[] = $zz[1];																			//-tablica nazw pól
+	   $pat[] = $tp[2];																			//-tablica ścierzek dostepu do pliku
+	   $prz[] = $tz;																				//-tablica przedrostków dla pola
+
+	   unset($tz);
+     }
+    }
+   }
+  }
+  catch(Exception $e)
+  {
+	$fx .= C::debug($e, 0);
+  }
+
+  unset($tabe, $ta, $zz, $tp, $tx, $ty, $i, $j);
+
+
+  if($pol)
+  {
+
+   $kwer = implode(',', $pol);
+
+   try
+   {
+
+	 if($tabe = DB::myQuery("SELECT $kwer FROM $t"))
+     while($ta = mysql_fetch_array($tabe))
+     {
+      $i = 0;
+
+      while($pol[$i])
+      {
+	    if($ta[$pol[$i]])
+	    {
+	     $this->fx .= '
+		  <p>kasujemy : '.$pat[$i].'/'.$ta[$pol[$i]].'</p>';									//-kominikat
+
+	     $this->fx .= $this->kaspl($pat[$i].'/', $ta[$pol[$i]], ''); 								//-kasowanie plików
+
+	  	  if($prz[$i])
+	     {
+	      $j = 0;
+
+	      while($prz[$i][$j])
+	      {
+	       $this->fx .= '
+			  <p>kasujemy : '.$pat[$i].'/'.$prz[$i][$j].$ta[$pol[$i]].'</p>';				//-kominikat
+
+			 $this->fx .= $this->kaspl($pat[$i].'/', $prz[$i][$j++].$ta[$pol[$i]], ''); 		//-kasowanie klonów plików
+			}
+		  }
+	 	 }
+	 	 $i++;
+		}
+	  }
+	 }
+ 	 catch(Exception $e){$fthis->x .= C::debug($e, 0);}
+
+  }
+  unset($tabe, $ta, $i, $pol, $pat, $prz);
+ }
+
+ /** ./cms/klasy/MojeSQL.php
+ @
+ * - sprawdza czy dana tablica istnieje
+ */
+
+ private function isTable($t)
+ {
+  if(!$t || $t === '') //-sprawdza parametr
+   return '<p>Parametr dla '.__FILE__.'->'.__CLASS__.'->'. __METHOD__.'->'. __FUNCTION__.'->'.__LINE__.' jest pusty!!</p>';
+
+  try
+  {
+   $jest = 0;
+
+	if($tab = DB::myQuery('SHOW TABLES'))
+	{
+	 while($ta = mysqli_fetch_assoc($tab))
+	 {
+	  if($ta['Tables_in_'.C::get('akt_baza')] === $t)
+	   $jest++;
+
+	 }
+   }
+
+	switch($jest)
+	{
+	 case 1 : return true; break;
+
+	 case 0 : return false; break;
+
+	 default:
+
+	  echo '<p>Duplikaty tabel!</p>';
+	  exit(__FILE__.'->'.__CLASS__.'->'. __METHOD__.'->'. __FUNCTION__.'->'.__LINE__);
+
+	}
+
+  }
+  catch(Exception $e)
+  {
+	C::debug($e, 0);
+  }
+
+ }
+
+
+ /**
+ *
+ * kasuje katalog wraz z zawartością
+ *
+ */
+
+ private function rrmdir($dir)
+ {
+
+  if(is_dir($dir))
+  {
+   $objects = scandir($dir);
+
+	$wt = '';
+
+	foreach ($objects as $object)
+	{
+
+    if($object != '.' && $object != '..')
+	 {
+     if(filetype($dir.'/'.$object) == 'dir')
+	   rrmdir($dir.'/'.$object);
+	  else
+	   $w = unlink($dir.'/'.$object);
+
+	  if($w)
+	   $wt .= '<p class=\'ok\'>'.$dir.'/'.$object.' :: usunięty</p>';
+	  else
+	   $wt .= '<p class=\'error\'>'.$dir.'/'.$object.' :: NIE został usunięty</p>';
+    }
+   }
+
+   reset($objects);
+   rmdir($dir);
+
+	unset($w);
+  }
+
+  return $wt;
+ }
+
+ /*
+ @
+ * -oblicza czas wykonywania operacji
+ */
+
+ private function czasOper($start)
+ {
+  $czas_end = explode(' ',microtime());
+  $czas_sta = explode(' ', $start);
+
+  $w = sprintf('%0.5f',($czas_end[1]-$czas_sta[1]) + ($czas_end[0]-$czas_sta[0]));
+
+  unset($czas_end, $czas_sta, $start);
+
+  return  $w.'s';
+ }
+
+ /*
+ @
+ */
+
+ public function w()
+ {
+   $this->fz = '<p>Nowy MySQL</p>'.$this->fz;
+
+	if($this->menuTab) $this->fx = $this->menuTab.$this->fx;
+
+ 	return array($this->fx, $this->fz);
+ }
+
+ /*
+ @
+ */
+
+ function __destruct()
+ {
+
+ }
+
+}
+?>

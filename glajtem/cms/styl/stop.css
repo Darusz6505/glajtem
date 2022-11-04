@@ -1,0 +1,43 @@
+/* strona STOP 2010-07-02 -> 2010-12-03 -> 2013-02-21 */
+
+* {
+	margin: 0;
+	padding: 0;
+	font: normal 13px Helvetica, sans-serif;
+	text-decoration: none;
+	outline: none;
+	border: none;
+	list-style: none;
+}
+
+body {text-align: center;}
+
+.komunikat {margin: 1em 0 0; font: bold 2em/180% Arial; color: #999;}
+
+.komunikat+img {
+	display: block;
+	position: relative;
+	width: 346px;
+	height: 204px;
+	margin: 1em auto;
+}
+
+a {display: block; width: 346px;	margin: 1em auto;}
+a:hover {text-decoration: underline;}
+
+#stop_test {
+	padding: 1em; border-radius: 4px;
+	background: #09F;
+	color: #FFF;
+	text-transform: uppercase;
+
+}
+
+#stop_test:hover {font-weight: bold; letter-spacing: .5px;}
+
+#stop_stopka { width: 600px; margin: 1em auto; padding: 1em 0; text-align: center; border-top: 1px solid #CCC;}
+
+#stop_stopka a {display: inline;}
+
+
+

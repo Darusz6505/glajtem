@@ -1,0 +1,67 @@
+/*
+aleproste.pl & projekt.etvn.pl -> 2012-11-21
+Dariusz Golczewski
+*/
+
+* {
+	margin: 0;
+	padding: 0;
+	font: normal 13px Helvetica, sans-serif;
+	outline: none;
+	border: none;
+	list-style: none;
+}
+body {text-align: center;}
+div {position: relative;}
+.er-wal {font-weight: bold; color: red;}
+h1 {
+	 width: 50%;
+	 margin: 5% auto 2em;
+	 font: bold 2em Arial; color: red;
+	 text-align: center;
+}
+.out {padding: 5% 0 2em; font: bold 1.2em /200% Verdana, Tahoma, Arial; color: #F00;}
+.out b {font: bold 1em /200% Verdana, Tahoma, Arial; color: #00F;}
+a {display: inline-block;	padding: .5em 1em; color: #00F;}
+a:hover {color: #F00;}
+.aaut {line-height: 160%; text-align: left;}
+.aaut+.aaut {text-align: right;}
+a+p, form+p {
+	width: 700px;
+	margin: 1em auto;
+	padding: .5em 0;
+	border-top: 1px solid #CCF;
+	border-bottom: 1px solid #CCF;
+}
+form {width: 500px; margin: 5% auto 1em; padding: 20px; border: 1px solid #CCF;}
+form div {margin: 0 0 1em;}
+label {padding: .6em 1em;}
+input[type=text], input[type=password] {
+	height: 26px;
+	width: 205px;
+	margin: .5em 0;
+	padding: 5px 0 5px 25px;
+	color: black;
+}
+input[type=text] {background: url('../skin/log_tlo.png') left top no-repeat;}
+input[type=password] {background: url('../skin/log_tlo.png') right top no-repeat;}
+input[type=text]:focus, input[type=password]:focus { border-bottom:2px solid #999;}
+input[type=submit]  {
+	display: block;
+	width: 150px;
+	margin: 1em auto;
+	padding: 6px;
+	border: none;
+	font-weight: bold;
+	text-transform: uppercase;
+	text-align: center;
+	line-height: 180%;
+	background: url('../skin/taster.jpg') no-repeat;
+}
+input[type=submit] {letter-spacing: 1px;}
+input[type=submit]:hover {	background: url(../skin/tast_hover.jpg) no-repeat; }
+label {display: inline-block;	width: 8em;	text-align: right; background: #CCF;}
+.pre {clear: both; width: 97%; margin: 1em auto; padding: 1em 1%; border: 1px solid #330; text-align: left;}
+.pre p {line-height: 160%;}
+.pre b {color: #0CC;}
+.pre b+b {color: #900;}

@@ -1,0 +1,93 @@
+#deny from 66.249
+
+#NOWY CMS 2010-06-16 -> 2011-02-14
+
+# zmiana interpretera php 2021-01-12
+:Location /*.php
+Use php74
+:Location
+
+RewriteEngine On
+
+#AddType text/x-component .htc
+
+#zabrania listowania katalogu, np. gdy  w adresie podamy nazwę katalogu
+Options -Indexes
+
+#CMS
+
+#RewriteRule ^*.php$												cms/stop.php [L]
+
+#link do cms'a
+RewriteRule ^_Admin$   											admin.php [L]
+
+
+RewriteRule ^cms.smsl$   										cms.php [L]
+
+RewriteRule ^/?(.+)\+([a-z_]+)\.cmsl$  					cms.php?sp=$2&cod=$1 [L]
+
+RewriteRule ^/?([-0-9a-zA-Z_\s]+)\+([a-z_]+).smsl$												cms.php?op=$1&sp=$2 [L]
+
+#linki do menu cms'a - podprogramy
+RewriteRule ^/?([a-z_]+).cmsl$																		cms.php?sp=$1 [L]
+
+RewriteRule ^/?([-0-9a-zA-Z_\s]+),+([a-z_]+)\.cmsl$    										cms.php?sp=$2&a=$1 [L]
+
+RewriteRule ^/?([-0-9a-ząćęłńóśźżA-Z_\s]+),+([a-z_]+)\.help$    							cms.php?sp=$2&a=$1 [L]
+
+#do operacji na wszytkich tabelach
+RewriteRule ^/?([-0-9a-zA-Z_\s]+),+([0-9_]+),mysql.cmsl$										cms.php?sp=mysql&a=$1&arch=$2 [L]
+
+#do operacji na wybranej tabeli
+RewriteRule ^/?([-0-9a-zA-Z_\s]+),+([a-z]+),+([0-9_]+),mysql.cmsl$						cms.php?sp=mysql&t=$1&a=$2&arch=$3 [L]
+
+
+RewriteRule ^/?([-0-9a-zA-Z_\s]+),+([-0-9a-zA-Z_\s]+),([a-z_]+)\.cmsl$    				cms.php?sp=$3&t=$1&a=$2 [L]
+
+
+
+
+# 2012-11-22 nowy link kodowany do cms'a
+
+RewriteRule ^/?(.+).htmlc$  				cms.php?sp=cms&cod=$1 [L]
+
+# edycja bezpośrednia z dodanym to nazwy tabeli linkiem powrotnym (2012-11-22 poddana testowaniu czy jest wykorzystywana )
+
+RewriteRule ^/??([0-9a-zA-Z_\s]+)\.{1}([-ąćęłńóśźż&#223;&#252;&#246;&#228;0-9a-zĄĆĘŁŃÓŚŹŻ&#220;&#214;&#196;A-Z_\s]+),+([&#223;&#252;&#246;&#228;a-z&#220;&#214;&#196;A-Z_0-9]+),+([a-z_]+).html$	cms.php?sp=cms&lb=$1&t=$2&id=$3&a=$4 [L]
+
+# edycja bezpośrednia BEZ linka powrotnego
+RewriteRule ^/?([-ąćęłńóśźż0-9a-zĄĆĘŁŃÓŚŹŻA-Z_\s]+),+([a-z_0-9]+),+([a-z_]+).html$	cms.php?sp=cms&t=$1&id=$2&a=$3 [L]
+
+# dla nowych rekordów z wstępnie definiowanymi polami, z linkiem powrotnym
+RewriteRule ^/?([0-9a-zA-Z_\s]+)\.{1}([-ąćęłńóśźż&#223;&#252;&#246;&#228;0-9a-zĄĆĘŁŃÓŚŹŻ&#220;&#214;&#196;A-Z_\s]+),+([a-z_0-9]+),+([a-z]+),+([-ąćęłńóśźż&#223;&#252;&#246;&#228;a-zĄĆĘŁŃÓŚŹŻ&#220;&#214;&#196;A-Z_0-9\.\s]+),edycja.html$   cms.php?sp=cms&lb=$1&t=$2&id=$3&a=$4&bb=$5 [L]
+
+# dla nowych rekordów z wstępnie definiowanymi polami
+RewriteRule ^/?([-ąćęłńóśźż&#223;&#252;&#246;&#228;0-9a-zĄĆĘŁŃÓŚŹŻ&#220;&#214;&#196;A-Z_\s]+),+([a-z_0-9]+),+([a-z]+),+([-ąćęłńóśźż&#223;&#252;&#246;&#228;a-zĄĆĘŁŃÓŚŹŻ&#220;&#214;&#196;A-Z_0-9\.\s]+),edycja.html$   cms.php?sp=cms&t=$1&id=$2&a=$3&bb=$4 [L]
+
+
+#SERWIS WWW
+
+#pozwala stosować dodatkowy parametr po znaku minus, który nie wpływa na zawartość podstrony
+#z podstrony wycinane jest w start.php wszystko po znaku -
+
+RewriteRule ^/?start-(.+)\.html$																index.php?akcja=start&le=$1 [L]
+
+RewriteRule ^/?([-ąćęłńóśźż0-9a-zĄĆĘŁŃÓŚŹŻA-Z_\s]+).html$							index.php?akcja=$1 [L]
+
+#tak jest od 2010-05-01
+RewriteRule ^/?(.+)\+([-,ąćęłńóśźż0-9a-zĄĆĘŁŃÓŚŹŻA-Z_\s=]+).html$  				index.php?op=$1&akcja=$2 [L]
+
+#Dodane 2013-03-10 -> linki powodujące błąd 404
+RewriteRule ^/?([-,ąćęłńóśźż0-9a-zĄĆĘŁŃÓŚŹŻA-Z_\-\+=\{\}\[\]]+)$  				index.php?akcja=start [L]
+
+ErrorDocument 404 /errors/404.php?host=host
+
+#ErrorDocument 404 /errors/404.php
+
+# lokalnie ?
+#RewriteEngine On
+#RewriteCond %{HTTPS} !=on
+#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# :Location /dlploty.php
+# Access deny all

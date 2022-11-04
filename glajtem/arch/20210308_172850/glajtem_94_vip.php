@@ -1,0 +1,1 @@
+<? exit('sory');?>231974626014604650c32acc8vi_id,vi_tyt,vi_data,vi_dawa,vi_test,vi_stat,vi_licz,vi_neli,vi_tend,vi_ipad1974626014604650c32acc8'1' ,'vip - glajtem' ,'2013-09-09 19:28:57' ,'2013-09-09 19:28:57' ,'1' ,'1' ,'0' ,'' ,'0' ,''1974626014604650c32acc8

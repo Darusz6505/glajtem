@@ -1,0 +1,84 @@
+/**
+*
+* projekt :: glajtem.pl - kontakt
+*
+* 2017-03-19
+*
+* aleproste.pl :: Dariusz Golczewski
+*
+*/
+
+#kontakt {margin: 0 auto; width: 70%; color: #099;}
+
+.kontakt {overflow: auto;}
+
+.kontakt form {position: relative; margin: 1em 0; padding: 1em 0;}
+
+.kontakt input, .kontakt textarea {border-radius: 5px;}
+
+.kontakt input[type=submit] {
+	height: 150px;
+	padding-top: 82px;
+	width: 100px;
+	background: url('../skin/send.png') top left no-repeat;
+	text-transform: uppercase;
+	color: #099;
+}
+
+.kontakt input[type=submit]:hover {background: url('../skin/send.png') top left no-repeat; color: #00C; font-weight: bold;}
+
+.kontakt label{
+	display: inline-block;
+	/*float: left;  */
+	clear: left;
+	width: 30%; /* zmiana */
+	height: auto;
+	margin-right: .5em;
+	padding-top: .8em;
+	text-align: right;
+	vertical-align: top;
+}
+
+.kontakt input[type=text], .kontakt textarea {padding: .2em .5em;  border:1px solid #555; color: #099; background: none;}
+
+.kontakt input[type=text]:focus, .kontakt textarea:focus {color: #FFF; background: #CCC; border-color: #099;}
+
+#textarea {	width: 70%; float: left;}
+
+.kontakt form div {width: 70%; float: left; clear: left;}
+
+.kontakt textarea {margin-top: 5px; width: 96%; height: 120px;}
+
+.kontakt input {width: 60%; height: 26px;	margin: .5em 0;}
+
+.kontakt .form_ster {position: absolute; top: 25px; right: 0; width: 100px; }
+
+.kontakt h2, #kontakt .akapit {text-align: center;}
+
+.er-wal {padding: .2em 1em; background: red; color: #FFF; }
+
+/*.mapa {clear: both; margin: 0 auto 2em; padding: 2em 1em; border: 1px solid #CCC;} */
+
+address {position: relative; width: 100%;	padding: 0 0 10px; margin-top: 10px;}
+
+.adres_kontakt p {
+	width: auto;
+	margin-left: 0px;
+	font: normal 2em/ 100% Arial; color: #099;
+	text-align: right;
+	text-shadow: 2px 2px 2px #999;
+}
+
+p.naz1, p.naz2 {font-size: 3em; text-shadow: 3px 3px 4px #595959;}
+p.naz2 {margin-bottom: 10px;}
+
+p.miasto, p.ulica, .woje {}
+
+p.woje {padding: 10px 0; font-size: 1.4em;}
+
+p.tel, p.mail {font-size: 1.2em;}
+
+p.tel b, p.mail b {font-size: 130%;}
+
+p.kontob {padding-top: .5em;}
+p.miasto {float: right; margin-left: 1em;}

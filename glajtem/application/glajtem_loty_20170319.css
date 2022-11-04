@@ -1,0 +1,30 @@
+/**
+*
+* projekt :: glajtem.pl - moje loty
+*
+* 2015-03-18
+* 2015-01-06
+* 2014-03-22
+*
+* aleproste.pl :: Dariusz Golczewski
+*
+*/
+
+h3.mojeloty, p.mojlot {margin: .5em 0; font: bold 1.4em Arial;}
+iframe.mojeloty {width: 100%; height: 700px;}
+
+a.mojeloty { color: #00C;}
+a.mojeloty:hover {text-decoration: underline; color: #F00;}
+
+#loty_lista {position: relative;	overflow: auto;}
+
+#loty_lista li {float: left;}
+
+#loty_lista li b {
+	display: inline-block;
+	width: 5ex;
+	text-align: right;
+}
+
+#loty_lista a.act {color: #FFF; background: #C00;}
+#loty_lista a.big {background: #CCF;}

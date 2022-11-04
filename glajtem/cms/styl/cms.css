@@ -1,0 +1,529 @@
+/* ALEPROSTE NOWE -> start:2010-02-11 -> 2010-11-15 -> 2011-03-04 -> 2012-03-06 -> 2012-05-10 -> 2013-01-04 */
+
+/* projekt.etvn.pl & aleproste.pl Dariusz Golczewski */
+
+* {
+	margin: 0;
+	padding: 0;
+	font: normal 13px/160% Helvetica, sans-serif;
+	text-decoration: none;
+	outline: none;
+	border: none;
+	list-style: none;
+}
+
+div {position: relative;}
+
+button {outline: none;}
+
+body {background: #E8E8E8 url(../skin/tlo.jpg); color: #282800;}
+
+#men_box {
+	position: fixed;
+	z-index: 100;
+	width: 100%;
+	background: #E8E8E8;
+}
+
+#nowyLiczZnak {z-index: 9999; padding: .2em 1em; border-radius: 4px;}
+#nowyLiczZnak b {color: #FFF; font-weight: bold; font-size: 1.2em; padding-left:.3em;}
+
+#info {height: 1em; padding: .3em 0; margin: 0 80px 4px;}
+#info b {font-weight: bold; color: #00C;}
+
+#men_box2 {position: relative; width: 100%; margin: 0 auto;}
+
+#strona {
+	/*z-index: 90; */
+	width: 96%;
+	min-height: 400px;
+	top: 120px;
+	margin: 0 auto 50px;
+	padding: 0 1em 3em;
+	background: #FFF;
+	overflow: auto;
+}
+
+#menu {width: 100%; list-style: none; text-align: center;}
+
+#menu {
+	min-height: 34px;
+	margin: 0 auto;
+	background: url(../skin/ludki.jpg) center top repeat-x;
+	overflow: auto;
+}
+
+#menu li, #menu_dod li {display: inline-block; z-index: 1;}
+
+#menu li {width: 129px; height: 37px;}
+
+#menu_dod li {}
+
+#menu li a {
+	display: block;
+	z-index: 10;
+	width: 130px;
+	height: 21px;
+	padding-top: 7px;
+	font: bold .9em Arial; color: #FFF;
+	text-align: center;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	/*background: rgba(151, 151, 0, 0.9); */
+	background: rgba(0, 153, 255, 0.8);
+	border-radius: 4px;
+}
+
+#menu li a:hover, #menu li a.active {height: 24px;	font-size: 1em; color: #FF0; }
+
+#menu li a.active {color: #000; background: #FFF; background: rgba(255, 255, 255, 0.9); border: 1px solid #000; width: 127px;}
+#menu li a:hover  {color: #603; background: #FFF; background: rgba(170, 213, 255, 0.9);}
+
+
+#menu_dod {
+	width: 99%;
+	margin: 0 auto .5em;
+}
+
+#menu_dod a {
+	display: inline-block;
+	border: 1px solid #996;
+	padding: .2em .6em;
+	font: bold .95em Arial;
+	color: #000;
+	background: #FC9;
+	border-radius: 4px;
+}
+
+#menu_dod a:hover, #menu_dod a.active {
+	border: 1px solid #CCF;
+	background: #666;
+	color: #FFF;
+}
+
+/* pole informacyjne pod menu */
+
+#cms_info {
+	width: 98%;
+	margin: 0 auto;
+}
+
+#cms_info b {color: #C60000;}
+
+.form_tab {float: left; margin: 10px;}
+
+#tab_info {float: left; margin: 14px 0 0;}
+
+#tab_info span {font: bold 1em Arial; color: red;}
+
+#tab_info+div {padding-top: 8px;}
+
+.form_tab select, .form_tab option {padding: .2em 0 .2em 1em;}
+
+.tab_ico, .tab_tab {
+	display: block;
+	margin: 10px 5px 10px;
+	border: 1px solid #CCF;
+}
+
+.tab_ico {
+	float: left;
+	margin: 2px 5px 5px 280px;
+	padding: 2px .4em;
+	font-weight: bold;
+	color: #FFF;
+	letter-spacing: .5px;
+	border-radius: 5px;
+}
+
+.tab_ico+.tab_ico {margin-left: 5px;}
+
+#tabele {
+	width: auto;
+	overflow: auto;
+	padding-bottom: 0;
+	margin-top: -5px;
+	text-align: center;
+}
+
+
+.tab_tab {margin: 8px 4px 5px;}
+
+a.tab_tab {display: inline-block; color: #000;}
+
+.tab_tab button, a.tab_tab {padding: .2em .4em; border: 1px solid #999; border-radius: 4px; font-weight: bold;}
+
+.tab_tab:hover { background: #09F; color: #FFF; border: 1px solid #09F;}
+
+.tab_tab button:hover { background: #993; color: #FFF; border-color: #E8E8E8;}
+
+.akt_tab {border-color: red;}
+
+.akt_tab button {background: #FC3;}
+
+.tab_vip button {color: #C00;}
+
+a.tab_vip {color: #C00;}
+
+.bezp {background: #3C0; }
+
+.bezp:hover {background: #0F0; color: #000;}
+
+.ostr {background: #F90;}
+.ostr:hover {background: #F00; color: #FFF;}
+
+.uwag {background: #F0F;}
+.uwag:hover {background: #000;}
+
+#sql_menu {
+	position: absolute;
+	left: 10px;
+	width: auto;
+	height: 2em;
+	overflow: hidden;
+	vertical-align: top;
+	background: #E8E8E8;
+	border: 1px solid #8C8C8C;
+}
+
+
+
+#sql_menu:hover {height: auto;}
+
+#sql_menu a, #sql_menu p {
+	display: block;
+	padding: .3em 1em;
+	text-transform: uppercase;
+}
+
+#sql_menu p {text-align: center;}
+
+#sql_menu a {margin: 3px 3px 0;	border: 1px solid #fff;}
+
+#sql_menu a:hover {color: #00C; background: #CCF;}
+.t {background: #E2E2E2;}
+.b {font-weight: bold;}
+.uwaga, .blond, .error {color: #F00;}
+.ok {color: #00C;}
+.wska {color: #009;}
+.czas {color: #C3C;}
+.zapis {color: #C60;}
+.ods {font: bold 1.2em Arial;}
+.ja {color: #C3C;}
+
+.cms_pok_tab b {color: #00F;}
+
+.cms_error {padding: .5em 0; font: bold 1.2em Arial; color: red;}
+.ce {text-align: center;}
+
+#error, .alert {color: red;}
+#error {font: bold 1.2em/180% Arial;}
+.alert {margin-left: 400px;}
+
+/* pokaz danych z rekordu formularza */
+
+#cms_pokaz {}
+
+#cms_pokaz div.pokaz {
+	position: relative;
+	width: 98%;
+	display: inline-block;
+	padding: .5em 1em;
+}
+
+#cms_pokaz div.pokaz+div.pokaz {border-top: 1px solid #C0C0C0;}
+
+#cms_pokaz label {
+	display: inline-block;
+	padding-right: .5em;
+	float: left;
+	clear: left;
+	width: 25%;
+	height: auto;
+	color: #996;
+	text-align: right;
+	border-right: 1px solid black;
+}
+
+#cms_pokaz p.ppokaz {
+    margin-left: 25.5%;
+	 padding-left: .5em;
+	 border-left: 1px solid black;
+}
+
+.plik_name {position: absolute; top: 3em; left: 2em;}
+
+#cms_pokaz_st {float: right; margin: 10px; background: #FFF;}
+
+#cms_for_ster {position: fixed; right: 0;}
+
+#cms_for_ster {
+	width: 160px;
+	top: 145px;
+	padding: 5px;
+	background: #0CF;
+	border-radius: 5px 0 0 5px;
+}
+
+#cms_for_ster input[type=submit], #cms_for_ster input[type=reset] {display: block; float: right; margin: 5px 10px;}
+
+input[type=submit]:hover, input[type=reset]:hover {background: #F90;}
+
+#cms_kopia {margin-left: 20px;}
+
+#cms_pokaz_st form {display: inline-block;}
+
+/* pokaz danych z rekordu formularza END*/
+
+
+/* ogólny styl formularzy cms'a */
+
+#cms_main_form {}
+
+.cms_pf {margin: 1px 0;	padding: 10px 0;}
+
+div+div.cms_pf {border-top: 1px solid #DDDDDD;}
+
+input, textarea, select, #label_sort {padding: .3em .5em; border: 1px solid #7C7C7C;}
+
+textarea {display: block;}
+
+select {padding-right: 0; padding-left: .2em; text-align: left;}
+
+option {padding-left: .5em; margin-top: 3px;}
+
+
+input+span, select+span {
+	display: inline-block;
+	position: relative;
+	margin-left: 1ex;
+	padding-bottom: 3px;
+}
+
+span+input {margin-left: 1em;}
+
+input+input[type=checkbox] {margin-left: 1em;}
+
+input[type=checkbox] {margin-top: 8px;}
+
+
+label.norm {
+	display: block;
+	float: left;
+	clear: left; /* musi być */
+	/*width: 400px; */
+	width: 25%;
+	height: auto;
+	margin-right: 5px;
+	padding-top: 4px;
+	text-align: right;
+}
+
+.vip_plik {/*widoczne tylko dla vipa pole z nazwą pliku na formularzu */
+	display: block;
+	position: absolute;
+	top: 14px;
+	right: 50px;
+	width: 200px;
+}
+
+label.oder {padding: 0 .5em;}
+
+textarea+span {
+	display: inline-block;
+	margin-left: 5px;;
+	vertical-align: top;
+}
+
+.cms_poz { /* nowa pozycja */
+	display: inline-block;
+	vertical-align: top;
+	padding: 2px;
+	width: 45px;
+	border: 1px solid #CCF;
+	overflow: auto;
+	/*z-index: 98; */
+}
+
+.tumbs {/* miniatury w formularzu */
+	position: relative;
+	margin: 0 0 0 26%;
+	/*vertical-align: top; */
+	/*border: 1px solid #CCF; */
+}
+
+.thu {}
+
+/* dymek administratora dla test=1 i dla help'a */
+
+.dym1, .hel {
+	display: block;
+	float: left;
+	width: 20px;
+	height: 15px;
+	padding-left: 15px;
+}
+
+.dym1 {background: url(../skin/adm.png) no-repeat;}
+.hel  {background: url(../skin/info.png) no-repeat;}
+
+
+#cms_tabela {text-align: center;}
+
+#cms_lista {display: inline-block; padding: 4px; background: #CCF;}
+
+#cms_lista p {overflow: auto; /*margin-left: -1px; */ background: #996; color: #FFF; height: 2em; }
+
+#cms_lista li {display: block; /*overflow:  auto; */ clear: both;}
+
+#cms_lista li a:hover, #cms_lista li:hover { background: #09C; color: #FFF;}
+
+
+#cms_lista li+li {/*margin-top: -1px; */}
+
+#cms_lista b {
+	display: inline-block;
+	float: left;
+	padding: .2em .4em;
+	height: 1.4em;
+	border: 1px solid #FFF;
+}
+
+#cms_lista b+b {margin-left: -1px;}
+
+.cms_news_list {display: inline-block; width: 24%; margin: 1px;}
+.cms_news_list label {display: block; width: 100%;}
+.cms_news_on {color: #FFF; background:#00F;}
+.cms_news_off {background: #EEE;}
+
+.cms_news_ster {
+	position: fixed;
+	top: 110px;
+	right: 20px;
+	padding:5px;
+	background: #Fc3;
+}
+
+.sel_rekord {display: inline-block; float: left;}
+.sel_rekord select[name=sortuj], .sel_rekord select[name=dod_col] {width: 30ex;}
+
+.cms_poz input[type=radio], .cms_poz b {
+	display: block;
+	float: left;
+}
+
+.cms_poz input[type=radio] {margin: 1px;}
+
+.cms_poz b {
+	margin: 1px;
+	width: 13px;
+	height: 13px;
+	background: #EEE;
+}
+
+.tff {display: block; float: left;}
+
+.cms_pozycja_pok {
+	position: absolute;
+	top: 10px;
+	left: 300px;
+	height: 64px;
+	width: 48px;
+}
+
+.cms_pozycja_pok a {
+	position: absolute;
+	left: -100px;
+}
+
+.cms_pozycja_pok b {
+	display: block;
+	float: left;
+	width: 15px;
+	height: 15px;
+	margin: 0 1px 1px 0;
+	background: #EEE;
+	font-size: 9px;
+	color: #999;
+}
+
+.cms_pozycja_pok .text {background: none; }
+
+.cms_pozycja_pok .wyb {background: #999;}
+
+.nowa {color: green; font-weight: bold;}
+
+.do_kadr {
+	margin-top: 10px;
+	padding: 5px;
+	min-height: 60px;
+	text-align: center;
+	background: url(../skin/load4.gif) center center no-repeat;
+}
+
+
+.hurt {
+	display: block;
+	float: left;
+	width: 220px;
+	height: 220px;
+	margin: 2px;
+	border: 1px solid blue;
+}
+
+.tyt_for_sektor {
+	font: bold 1.2em/160% Arial; border-bottom: 2px solid;
+	padding: 0 5%;
+	width: 90%;
+}
+
+.cmsFloat .cms_pf {width: 200px;	display: inline-block;}
+
+.cmsFloat label {width: 200px; text-align: left;}
+
+.cmsLista .cms_pf {width: auto; display: block;}
+
+#folder_tyt {margin: 1em; font: bold 1em Arial;}
+.folder_arch {display: inline-block; position: relative; width: 80px; height: 80px;}
+.folder_arch img {width: 80px;}
+.folder_arch b {
+	display: block;
+	position: absolute;
+	left: 46%;
+	top: 46%;
+	font: bold 1.3em Arial;
+}
+
+.folder_arch+p {margin: 1em; width: 30%;}
+
+
+
+#cms_lista li {}
+
+#cms_lista li input[type=checkbox], p input[type=checkbox] {display: block; margin: 5px; padding: 0 5px;}
+
+#cms_lista label, #cms_lista a.del, #cms_lista a.edi  {
+	display: inline-block;
+	float: left;
+	padding: .2em .5em;
+	height: 1.4em;
+	/*border: 1px solid #FFF; */
+}
+
+#cms_lista a.del, #cms_lista a.edi, #cms_lista p b  { /*overflow: hidden; */}
+
+#cms_lista b+a, #cms_lista a+a, #cms_lista label+b, #cms_lista label+a b {margin-left: -1px;}
+
+
+#cms_lista b.noborder {border: 0;}
+
+#cms_lista b.noborder img {margin-left: 1px;}
+
+#rek_ster {margin: 1em 0;}
+
+input, select, textarea {border-radius: 4px;}
+input[type=button], input[type=submit], input[type=reset] {background: #Ff9;}
+input[type=reset] {background: #FC0;}
+
+
+#rek_ster input[type=button]:hover, #rek_ster input[type=submit]:hover {background: #F60;	cursor: pointer;}

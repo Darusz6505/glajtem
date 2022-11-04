@@ -1,0 +1,31 @@
+/**
+*
+* projekt :: glajtem.pl -> dlploty automat
+*
+* 2018-08-10
+*
+* aleproste.pl :: Dariusz Golczewski
+*
+*/
+/*
+* {
+	margin: 0;
+	padding: 0;
+	font: normal 12px /160% Verdana, Tachoma, Helvetica, sans-serif;
+	text-decoration: none;
+	outline: none;
+	border: none;
+	list-style: none;
+	color: #303030;
+	/*color: #4E4E4E; */
+	/*letter-spacing: 0.5px; */
+	/*filter: gray; */
+/*} */
+
+.red {color: red;}
+.bred {color: red; font-weight: bold;}
+
+.green {color: green;}
+.bgreen {color: green; font-weight: bold;}
+
+.blue {color: blue;}

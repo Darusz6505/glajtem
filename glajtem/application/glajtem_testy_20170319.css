@@ -1,0 +1,103 @@
+/**
+*
+* projekt :: glajtem.pl - testy
+*
+* 2015-03-18
+* 2015-01-06
+* 2014-03-22
+*
+* aleproste.pl :: Dariusz Golczewski
+*
+*/
+
+#testowy {width: 400px;	margin: 0 auto;}
+
+#testowy h2 {font: normal 1.2em Arial;}
+#testowy h2+h2 {color: red;}
+
+#test {width: 400px;	margin: 0 auto;}
+
+#test li {
+	width: 100%;
+	min-height: 4em;
+	margin: 2px;
+	background: #FFF;
+	border: 1px solid #000;
+	border-radius: 5px;
+}
+
+#test .pyta {background: #0FF;}
+
+#test li p {width: auto; padding: .5em 1em;}
+
+#test li.odp:hover {background: #CCF;}
+
+#test li.falsh {background: red;}
+
+#test li.falsh:hover {background: red;}
+
+
+#test a {
+ display: block;
+ min-height: 4em;
+ width: 100%;
+}
+
+
+#testy {
+	width: 400px;
+	height: 40px;
+	margin: 1em auto;
+	background: #FFF;
+	border-radius: 5px;
+}
+
+#testy li {
+	width: 38px;
+	height: 38px;
+	margin: 1px;
+	float: left;
+	background: #FC6;
+	border-radius: 4px;
+}
+
+#testy a {
+	display: block;
+	width: 100%;
+	text-align: center;
+	font: bold 1.2em/ 260% Arial;
+}
+
+#testy li:hover, #testy li.wyb {background: #30F;}
+#testy li a:hover, #testy li.wyb a  {color: #FFF;}
+
+#wyniki {text-align: center; overflow: auto;}
+
+#wyniki b {
+	display: block;
+	float: left;
+	width: 24%;
+	margin: 0 0.5% 1em;
+	padding: .5em 0;
+	border-radius: 4px;
+	background: #CFF;
+}
+
+#wyniki b i {font-weight: bold;}
+
+#wyniki b.zle i {color: #FFF;}
+#wyniki b.count i, #wyniki b.wynik i {color: #00C;}
+
+#wyniki+a, .test_nota {
+	display: block;
+	width: 200px;
+	margin: 1em auto;
+	padding: 1em;
+	background: #03F;
+	text-align: center; color: #FFF;
+	border-radius: 5px;
+}
+
+#wyniki h2 {text-indent: 0;}
+
+.ilustr {width: 99%; margin: 1em auto 0; text-align: center;}

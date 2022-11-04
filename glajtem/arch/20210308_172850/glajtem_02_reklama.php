@@ -1,0 +1,1 @@
+<? exit('sory');?>231070406532604650c2bf291rekl_id,rekl_stat,rekl_blok,rekl_dapu,rekl_dado,rekl_nazw,rekl_size,rekl_kod,rekl_fot0,rekl_alt0,rekl_open1070406532604650c2bf291'5' ,'1' ,'0' ,'2014-09-19 20:08:12' ,'2014-09-19 20:08:12' ,'sdfasd' ,'750x200' ,'Reklama' ,'' ,'' ,'0'1070406532604650c2bf291
